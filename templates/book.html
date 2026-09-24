@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+{% block title %}Book a Travel Companion - Silvercare{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+            <div class="d-flex align-items-center gap-3 mb-4">
+                <span class="fs-1 text-primary">🤝📋</span>
+                <div>
+                    <h2 class="fw-bold mb-1">Book a Verified Companion</h2>
+                    <p class="text-muted mb-0">Fill in the journey details. A vetted guide will be matched immediately.</p>
+                </div>
+            </div>
+
+            <form action="{{ url_for('book') }}" method="POST" id="bookingForm">
+                <!-- Who is booking? -->
+                <div class="mb-4 p-3 bg-light rounded-3">
+                    <label class="form-label fw-bold d-block">Who is booking this trip?</label>
+                    <div class="d-flex gap-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="booked_by" id="roleElder" value="Elderly Citizen (Self)" checked onchange="toggleElderFields()">
+                            <label class="form-check-label fw-semibold" for="roleElder">
+                                🧓 For Myself (Elderly Citizen)
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="booked_by" id="roleFamily" value="Family Member (Child/Relative)" onchange="toggleElderFields()">
+                            <label class="form-check-label fw-semibold" for="roleFamily">
+                                👨‍👩‍👧 On Behalf of Parent / Relative
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Booker & Passenger Info -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold" id="bookerNameLabel">Your Full Name <span class="text-danger">*</span></label>
+                        <input type="text" name="booker_name" class="form-control form-control-lg" placeholder="e.g. Ramesh Chandra" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold" id="bookerPhoneLabel">Contact Phone Number <span class="text-danger">*</span></label>
+                        <input type="tel" name="booker_phone" class="form-control form-control-lg" placeholder="e.g. 9876543210" required>
+                    </div>
+                </div>
+
+                <!-- If Family member books, show elder's name & phone -->
+                <div class="row g-3 mb-4" id="elderDetailsRow" style="display: none;">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Elderly Passenger's Name</label>
+                        <input type="text" name="elderly_name" id="elderNameInput" class="form-control form-control-lg" placeholder="e.g. Mrs. Sarla Chandra">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Elderly Passenger's Phone</label>
+                        <input type="tel" name="elderly_phone" id="elderPhoneInput" class="form-control form-control-lg" placeholder="e.g. 9811223344">
+                    </div>
+                </div>
+
+                <!-- Pickup & Destination -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Pickup Location / Home Address <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-geo-alt-fill text-danger"></i></span>
+                        <input type="text" name="pickup_location" class="form-control form-control-lg" placeholder="Enter house no., building or landmark" required>
+                    </div>
+                    <div class="form-text">Your companion will arrive directly at this address to assist.</div>
+                </div>
+
+                <!-- Destination with Quick Presets (Addresses Canvas pain point) -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Destination / Travel Goal <span class="text-danger">*</span></label>
+                    <div class="input-group mb-2">
+                        <span class="input-group-text"><i class="bi bi-pin-map-fill text-primary"></i></span>
+                        <input type="text" name="destination" id="destinationInput" value="{{ prefill.destination }}" class="form-control form-control-lg" placeholder="e.g. Central Railway Station Platform 4" required>
+                    </div>
+
+                    <!-- Presets -->
+                    <div class="small text-muted mb-2">⚡ Quick 1-Click Suggestions:</div>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-sm btn-outline-secondary preset-destination" data-location="City Central Railway Station" data-type="Railway Station">🚆 Central Railway Station</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary preset-destination" data-location="Apollo / Max Super Speciality Hospital" data-type="Hospital">🏥 City Hospital OPD</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary preset-destination" data-location="Terminal 3, International Airport" data-type="Airport">✈️ Airport Terminal 3</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary preset-destination" data-location="State Bank Main Branch" data-type="Bank">🏦 State Bank Branch</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary preset-destination" data-location="Local Temple & Market" data-type="Market">🛕 Temple / Market</button>
+                    </div>
+
+                    <div class="mt-3">
+                        <label class="form-label fw-bold small text-muted">Destination Category</label>
+                        <select name="destination_type" id="destinationTypeSelect" class="form-select">
+                            <option value="Railway Station" {% if prefill.destination_type == 'Railway Station' %}selected{% endif %}>Railway Station</option>
+                            <option value="Hospital" {% if prefill.destination_type == 'Hospital' %}selected{% endif %}>Hospital / Clinic</option>
+                            <option value="Airport" {% if prefill.destination_type == 'Airport' %}selected{% endif %}>Airport</option>
+                            <option value="Bank" {% if prefill.destination_type == 'Bank' %}selected{% endif %}>Bank / Govt Office</option>
+                            <option value="Market" {% if prefill.destination_type == 'Market' %}selected{% endif %}>Market / Grocery / Temple</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Date & Time -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Date of Travel <span class="text-danger">*</span></label>
+                        <input type="date" name="service_date" class="form-control form-control-lg" required id="serviceDateInput">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Pickup Time <span class="text-danger">*</span></label>
+                        <input type="time" name="service_time" class="form-control form-control-lg" required value="09:30">
+                    </div>
+                </div>
+
+                <!-- Assistance Needed (Ideation Canvas Props) -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Assistance Needed (Select all that apply)</label>
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <div class="form-check p-2 border rounded-3 bg-light">
+                                <input class="form-check-input ms-1" type="checkbox" name="assistance" value="Wheelchair Support" id="asstWheelchair" {% if 'Wheelchair' in prefill.assistance %}checked{% endif %}>
+                                <label class="form-check-label ms-2 fw-semibold" for="asstWheelchair">
+                                    ♿ Wheelchair Support
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check p-2 border rounded-3 bg-light">
+                                <input class="form-check-input ms-1" type="checkbox" name="assistance" value="Heavy Luggage & Trolley Handling" id="asstLuggage" {% if 'Luggage' in prefill.assistance %}checked{% endif %}>
+                                <label class="form-check-label ms-2 fw-semibold" for="asstLuggage">
+                                    🧳 Luggage & Trolley Handling
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check p-2 border rounded-3 bg-light">
+                                <input class="form-check-input ms-1" type="checkbox" name="assistance" value="Ticket Verification & Boarding Guide" id="asstTickets" checked>
+                                <label class="form-check-label ms-2 fw-semibold" for="asstTickets">
+                                    🎟️ Ticket & Boarding Guidance
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check p-2 border rounded-3 bg-light">
+                                <input class="form-check-input ms-1" type="checkbox" name="assistance" value="Walking Stick / Gentle Pace Support" id="asstWalking">
+                                <label class="form-check-label ms-2 fw-semibold" for="asstWalking">
+                                    🦯 Walking Support & Slow Pace
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Special Instructions / Notes -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Special Care Instructions / Medical Notes</label>
+                    <textarea name="notes" class="form-control" rows="2" placeholder="e.g. Needs reminder for BP medicine at 11 AM; coach seat S4-22"></textarea>
+                </div>
+
+                <!-- Pricing Transparency -->
+                <div class="p-3 mb-4 rounded-3 border bg-light d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="fw-bold fs-5 text-dark">Estimated Fee: ₹450</span>
+                        <div class="small text-muted">Includes complete companion assistance for up to 3 hours.</div>
+                    </div>
+                    <span class="badge bg-success text-white px-3 py-2 fs-6">Pay After Safe Drop-off</span>
+                </div>
+
+                <button type="submit" class="btn btn-primary-custom btn-lg w-100 py-3 fs-5">
+                    Confirm & Match Verified Companion <i class="bi bi-arrow-right-circle ms-2"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Set default date to today
+    document.getElementById('serviceDateInput').value = new Date().toISOString().split('T')[0];
+
+    function toggleElderFields() {
+        const isFamily = document.getElementById('roleFamily').checked;
+        const elderRow = document.getElementById('elderDetailsRow');
+        const bookerLabel = document.getElementById('bookerNameLabel');
+        const elderName = document.getElementById('elderNameInput');
+
+        if (isFamily) {
+            elderRow.style.display = 'flex';
+            bookerLabel.innerHTML = 'Family Member Name <span class="text-danger">*</span>';
+            elderName.required = true;
+        } else {
+            elderRow.style.display = 'none';
+            bookerLabel.innerHTML = 'Your Full Name <span class="text-danger">*</span>';
+            elderName.required = false;
+        }
+    }
+</script>
+{% endblock %}

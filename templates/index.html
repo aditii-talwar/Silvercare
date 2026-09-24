@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block title %}Silvercare - Elderly Travel & Companion Assistance{% endblock %}
+
+{% block content %}
+<!-- Hero Banner -->
+<div class="hero-banner">
+    <div class="row align-items-center">
+        <div class="col-lg-8">
+            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold mb-3 fs-6">
+                🌟 Trusted by 500+ Families Across Cities
+            </span>
+            <h1 class="hero-title">Independent, Safe & Reassuring Travel for Seniors</h1>
+            <p class="hero-subtitle">
+                Book a trusted, verified companion to handle station navigation, luggage, tickets, and boarding—while your family stays reassured with live tracking updates.
+            </p>
+            <div class="mt-4 d-flex flex-wrap gap-3">
+                <a href="{{ url_for('book') }}" class="btn btn-primary-custom btn-lg">
+                    <i class="bi bi-calendar-check-fill me-2"></i> Book a Companion
+                </a>
+                <a href="{{ url_for('track') }}" class="btn btn-light btn-lg text-primary fw-bold rounded-3">
+                    <i class="bi bi-geo-alt-fill me-1 text-danger"></i> Track Live Trip
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-4 text-center d-none d-lg-block">
+            <div class="bg-white p-4 rounded-4 shadow-sm text-dark">
+                <div class="fs-1 mb-2">🤝🧓</div>
+                <h5 class="fw-bold mb-1">Total Assisted Journeys</h5>
+                <p class="display-6 fw-bold text-primary mb-1">{{ total_completed }}+</p>
+                <p class="small text-muted mb-0">100% Verified Companions</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Action Cards -->
+<div class="row g-4 mb-5">
+    <div class="col-md-4">
+        <div class="action-card">
+            <div>
+                <div class="card-icon text-primary">🧓📅</div>
+                <h3 class="fw-bold mb-3">Book for You or Your Parents</h3>
+                <p class="text-muted">
+                    Simple booking with zero tech confusion. Select destination presets like Railway Stations, Hospitals, or Banks.
+                </p>
+            </div>
+            <a href="{{ url_for('book') }}" class="btn btn-primary-custom w-100 mt-3">Book Now</a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="action-card">
+            <div>
+                <div class="card-icon text-success">📍🛡️</div>
+                <h3 class="fw-bold mb-3">Family Live Reassurance</h3>
+                <p class="text-muted">
+                    Enter the booking code to check live milestones: Companion arrival, luggage assistance, boarding status, and safe drop-off.
+                </p>
+            </div>
+            <a href="{{ url_for('track') }}" class="btn btn-secondary-custom w-100 mt-3">Track Journey</a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="action-card">
+            <div>
+                <div class="card-icon text-warning">⭐🏅</div>
+                <h3 class="fw-bold mb-3">Verified Companions</h3>
+                <p class="text-muted">
+                    Police-verified, background checked, and trained in first-aid & mobility assistance. View their badges and reviews.
+                </p>
+            </div>
+            <a href="{{ url_for('companions_list') }}" class="btn btn-outline-primary w-100 mt-3 py-2 fw-bold">View Companions</a>
+        </div>
+    </div>
+</div>
+
+<!-- Situations We Assist (From Ideation Canvas) -->
+<div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 mb-5 bg-white">
+    <div class="text-center max-w-700 mx-auto mb-4">
+        <span class="text-uppercase fw-bold text-secondary">Care In Every Situation</span>
+        <h2 class="fw-bold">Where Can Our Companions Assist?</h2>
+        <p class="text-muted">Specially designed for crowded, noisy, and stressful environments.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-3 col-6 text-center">
+            <div class="p-3 border rounded-3 h-100 bg-light">
+                <div class="fs-1 mb-2">🚆</div>
+                <h5 class="fw-bold">Railway Stations</h5>
+                <p class="small text-muted mb-0">Platform navigation, coolie coordination, coach boarding</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 text-center">
+            <div class="p-3 border rounded-3 h-100 bg-light">
+                <div class="fs-1 mb-2">🏥</div>
+                <h5 class="fw-bold">Hospitals & Clinics</h5>
+                <p class="small text-muted mb-0">Wheelchair push, queue standing, pharmacy prescription collection</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 text-center">
+            <div class="p-3 border rounded-3 h-100 bg-light">
+                <div class="fs-1 mb-2">✈️</div>
+                <h5 class="fw-bold">Airports</h5>
+                <p class="small text-muted mb-0">Luggage check-in assistance, security line accompaniment, boarding gate</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 text-center">
+            <div class="p-3 border rounded-3 h-100 bg-light">
+                <div class="fs-1 mb-2">🏛️</div>
+                <h5 class="fw-bold">Banks & Govt Offices</h5>
+                <p class="small text-muted mb-0">Form-filling support, token queues, respectful guidance</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Companions Preview -->
+<div class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Meet Our Top Rated Companions</h2>
+            <p class="text-muted mb-0">Trained, empathetic, and vetted for maximum safety</p>
+        </div>
+        <a href="{{ url_for('companions_list') }}" class="btn btn-outline-secondary fw-bold">View All Guides <i class="bi bi-arrow-right"></i></a>
+    </div>
+
+    <div class="row g-4">
+        {% for companion in companions %}
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <span class="fs-1 p-2 bg-light rounded-circle">{{ companion.photo_emoji }}</span>
+                    <div>
+                        <h5 class="fw-bold mb-0">{{ companion.name }}</h5>
+                        <div class="verified-badge mt-1">
+                            <i class="bi bi-patch-check-fill"></i> Police Verified
+                        </div>
+                    </div>
+                </div>
+                <p class="small text-muted">{{ companion.bio }}</p>
+                <div class="mb-3">
+                    <small class="fw-bold text-dark d-block mb-1">Specialties:</small>
+                    {% for skill in companion.skills.split(',') %}
+                    <span class="badge-tag">{{ skill.strip() }}</span>
+                    {% endfor %}
+                </div>
+                <div class="border-top pt-3 mt-auto d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-warning fw-bold"><i class="bi bi-star-fill"></i> {{ companion.rating }}</span>
+                        <small class="text-muted">({{ companion.trips_completed }} trips)</small>
+                    </div>
+                    <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Available Today</span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

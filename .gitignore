@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+*$py.class
+silvercare.db
+.env
+venv/
+.venv/
+.idea/
+.vscode/

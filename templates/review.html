@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Rate Your Companion - Silvercare{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white text-center">
+            <div class="fs-1 text-warning mb-2">⭐🤝</div>
+            <h2 class="fw-bold mb-1">How was your companion's care?</h2>
+            <p class="text-muted mb-4">
+                Your feedback helps us continuously re-validate companion credentials and maintain high safety standards.
+            </p>
+
+            <form action="{{ url_for('review', booking_code=booking.booking_code) }}" method="POST" class="text-start">
+                <div class="p-3 bg-light rounded-3 mb-4 text-center">
+                    <span class="text-muted d-block small mb-1">Companion Assisting:</span>
+                    <h4 class="fw-bold text-primary mb-0">{{ booking.companion_name or 'Silvercare Companion' }}</h4>
+                </div>
+
+                <div class="mb-4 text-center">
+                    <label class="form-label fw-bold d-block mb-3 fs-5">Overall Rating</label>
+                    <div class="d-flex justify-content-center gap-3">
+                        <label class="p-3 border rounded-3 text-center cursor-pointer flex-fill">
+                            <input type="radio" name="rating" value="5" class="form-check-input d-block mx-auto mb-1" checked>
+                            <span class="fs-3">🌟🌟🌟🌟🌟</span>
+                            <span class="d-block small fw-bold mt-1">Excellent</span>
+                        </label>
+                        <label class="p-3 border rounded-3 text-center cursor-pointer flex-fill">
+                            <input type="radio" name="rating" value="4" class="form-check-input d-block mx-auto mb-1">
+                            <span class="fs-3">🌟🌟🌟🌟</span>
+                            <span class="d-block small fw-bold mt-1">Very Good</span>
+                        </label>
+                        <label class="p-3 border rounded-3 text-center cursor-pointer flex-fill">
+                            <input type="radio" name="rating" value="3" class="form-check-input d-block mx-auto mb-1">
+                            <span class="fs-3">🌟🌟🌟</span>
+                            <span class="d-block small fw-bold mt-1">Average</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Reviewer Name</label>
+                    <input type="text" name="reviewer_name" class="form-control form-control-lg" value="{{ booking.elderly_name }}" required>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Share Your Experience / Feedback</label>
+                    <textarea name="comment" class="form-control" rows="3" placeholder="e.g. Companion was extremely polite, helped with luggage effortlessly, and made my journey stress-free!"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary-custom btn-lg w-100 py-3 fs-5">
+                    Submit Review & Finish <i class="bi bi-send-check ms-1"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
