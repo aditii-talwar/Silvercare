@@ -43,12 +43,13 @@ h1, h2, h3, h4, h5 {
 }
 
 .nav-link {
-    font-size: 1.05rem;
+    font-size: 1rem;
     font-weight: 600;
     color: #334155 !important;
-    padding: 8px 16px !important;
+    padding: 8px 14px !important;
     border-radius: 8px;
     transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
 .nav-link:hover, .nav-link.active {
@@ -57,17 +58,30 @@ h1, h2, h3, h4, h5 {
 }
 
 .emergency-btn {
-    background-color: #fee2e2;
-    color: #dc2626 !important;
-    font-weight: 700;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #ffffff !important;
+    font-weight: 800;
     border-radius: 50px;
     padding: 8px 18px !important;
-    border: 1px solid #fca5a5;
+    border: none;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
+    transition: all 0.2s ease;
+    cursor: pointer;
 }
 
 .emergency-btn:hover {
-    background-color: #dc2626;
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
     color: #ffffff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(220, 38, 38, 0.45);
 }
 
 /* Hero Section */
