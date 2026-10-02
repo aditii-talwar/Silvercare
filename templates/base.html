@@ -9,16 +9,23 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Custom Style with Squarespace Palette -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=3.1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=4.0">
 </head>
 <body>
 
     <!-- Top Accessibility & Emergency Bar -->
-    <div class="bg-white border-bottom py-1">
-        <div class="container d-flex justify-content-between align-items-center small text-muted">
-            <span><i class="bi bi-shield-check text-success me-1"></i> 100% Police Verified Companions & Live GPS Reassurance</span>
-            <div class="d-flex align-items-center gap-3">
-                <a href="tel:112" class="text-danger fw-bold text-decoration-none"><i class="bi bi-telephone-fill me-1"></i> 24x7 Safety Helpline: 112 / 1090</a>
+    <div class="top-safety-bar py-1 border-bottom bg-white">
+        <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2 small">
+            <span class="d-flex align-items-center text-muted">
+                <i class="bi bi-shield-check text-success me-1"></i>
+                <span class="d-none d-md-inline">100% Police Verified Companions & Live GPS Reassurance</span>
+                <span class="d-inline d-md-none fw-semibold">100% Verified Companions</span>
+            </span>
+            <div class="d-flex align-items-center gap-3 ms-auto">
+                <a href="tel:112" class="text-danger fw-bold text-decoration-none d-flex align-items-center">
+                    <i class="bi bi-telephone-fill me-1"></i>
+                    <span>Helpline: <strong class="text-nowrap">112 / 1090</strong></span>
+                </a>
             </div>
         </div>
     </div>
@@ -29,30 +36,30 @@
             <a class="navbar-brand" href="{{ url_for('index') }}">
                 <i class="bi bi-heart-pulse-fill brand-icon"></i> Silvercare
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navMenu">
-                <ul class="navbar-nav ms-auto mb-2 mb-xl-0 align-items-xl-center gap-1">
+                <ul class="navbar-nav ms-auto mb-2 mb-xl-0 align-items-xl-center nav-items-list">
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('index') }}"><i class="bi bi-house-door me-1"></i> Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('book') }}"><i class="bi bi-calendar-check me-1"></i> Book Companion</a>
+                        <a class="nav-link" href="{{ url_for('book') }}"><i class="bi bi-calendar-check me-1"></i> Book</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('track') }}"><i class="bi bi-geo-alt me-1"></i> Track Journey</a>
+                        <a class="nav-link" href="{{ url_for('track') }}"><i class="bi bi-geo-alt me-1"></i> Track Trip</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('companions_list') }}"><i class="bi bi-shield-check me-1"></i> Verified Guides</a>
+                        <a class="nav-link" href="{{ url_for('companions_list') }}"><i class="bi bi-shield-check me-1"></i> Companions</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link fw-bold" href="{{ url_for('companion_portal') }}"><i class="bi bi-person-badge me-1"></i> Companion Portal</a>
+                        <a class="nav-link" href="{{ url_for('companion_portal') }}"><i class="bi bi-person-badge me-1"></i> Portal</a>
                     </li>
                     
                     <!-- Auth State Navigation -->
                     {% if current_user %}
-                    <li class="nav-item dropdown ms-xl-2">
+                    <li class="nav-item dropdown ms-xl-2 my-1 my-xl-0">
                         <a class="nav-link dropdown-toggle d-flex align-items-center gap-1 p-1 px-3 border rounded-pill bg-light" href="#" role="button" data-bs-toggle="dropdown">
                             <span class="badge bg-secondary rounded-pill">
                                 {{ current_user.role|capitalize }}
@@ -72,15 +79,15 @@
                         </ul>
                     </li>
                     {% else %}
-                    <li class="nav-item ms-xl-2">
+                    <li class="nav-item ms-xl-2 my-1 my-xl-0">
                         <a class="nav-link" href="{{ url_for('login') }}"><i class="bi bi-box-arrow-in-right me-1"></i> Log In</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="btn btn-sm btn-outline-custom px-3 py-1" href="{{ url_for('signup') }}">Sign Up</a>
+                    <li class="nav-item ms-xl-1 my-1 my-xl-0">
+                        <a class="btn-nav-signup" href="{{ url_for('signup') }}">Sign Up</a>
                     </li>
                     {% endif %}
 
-                    <li class="nav-item ms-xl-2">
+                    <li class="nav-item ms-xl-2 my-2 my-xl-0">
                         <button type="button" class="emergency-btn" data-bs-toggle="modal" data-bs-target="#sosModal">
                             <i class="bi bi-exclamation-triangle-fill"></i> SOS Alert
                         </button>
@@ -240,6 +247,6 @@
         }
     </script>
     <!-- Custom Application JS -->
-    <script src="{{ url_for('static', filename='js/app.js') }}?v=3.1"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}?v=4.0"></script>
 </body>
 </html>
