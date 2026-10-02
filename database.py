@@ -40,7 +40,7 @@ def init_db():
             rating REAL DEFAULT 4.9,
             trips_completed INTEGER DEFAULT 28,
             skills TEXT,
-            photo_emoji TEXT DEFAULT '🧑‍💼',
+            photo_emoji TEXT DEFAULT 'bi-person-check-fill',
             is_available INTEGER DEFAULT 1,
             bio TEXT,
             FOREIGN KEY (user_id) REFERENCES users(id)
@@ -117,25 +117,25 @@ def init_db():
             (
                 comp_user_id, 'Ramesh Sharma', '+91 98765 43210', 1, 4.9, 54,
                 'Wheelchair Assistance, Railway Platform Navigation, Luggage Support, First Aid Certified',
-                '👨‍💼', 1,
+                'bi-person-check-fill', 1,
                 'Background verified & police certified. Over 2 years of caring assistance for elders during railway travel.'
             ),
             (
                 None, 'Priya Deshmukh', '+91 98234 56789', 1, 5.0, 42,
                 'Hospital Checkups, Airport Boarding, Medication Reminder, Wheelchair Assistance',
-                '👩‍💼', 1,
+                'bi-person-check-fill', 1,
                 'Trained in patient care and mobility assistance. Calm, patient, and keeps family members constantly updated.'
             ),
             (
                 None, 'Arjun Nair', '+91 97456 12345', 1, 4.8, 36,
                 'Bank & Government Office Paperwork, Bus Navigation, Heavy Luggage Handling',
-                '🧑‍💼', 1,
+                'bi-person-check-fill', 1,
                 'Verified companion with extensive experience guiding elders through crowded stations and administrative visits.'
             ),
             (
                 None, 'Sunita Patel', '+91 98980 11223', 1, 4.9, 68,
                 'Elder Companionship, Metro & Local Transit, Grocery/Temple Visits, Wheelchair Friendly',
-                '👩‍💼', 1,
+                'bi-person-check-fill', 1,
                 'Warm and attentive companion with over 3 years of experience helping senior citizens travel independently.'
             )
         ]
@@ -143,6 +143,9 @@ def init_db():
             INSERT INTO companions (user_id, name, phone, verified_badge, rating, trips_completed, skills, photo_emoji, is_available, bio)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', sample_companions)
+
+    # Clean any old emojis from existing records in the database
+    cursor.execute("UPDATE companions SET photo_emoji = 'bi-person-check-fill'")
 
     conn.commit()
     conn.close()

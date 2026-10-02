@@ -5,35 +5,41 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-7">
-        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white text-center">
-            <div class="fs-1 text-warning mb-2">⭐🤝</div>
+        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white text-center" style="border: 1px solid var(--border-color) !important;">
+            <i class="bi bi-star-fill fs-1 mb-2 d-block" style="color: var(--color-caramel);"></i>
             <h2 class="fw-bold mb-1">How was your companion's care?</h2>
             <p class="text-muted mb-4">
                 Your feedback helps us continuously re-validate companion credentials and maintain high safety standards.
             </p>
 
             <form action="{{ url_for('review', booking_code=booking.booking_code) }}" method="POST" class="text-start">
-                <div class="p-3 bg-light rounded-3 mb-4 text-center">
+                <div class="p-3 rounded-3 mb-4 text-center" style="background-color: var(--color-batter-light); border: 1px solid var(--border-color);">
                     <span class="text-muted d-block small mb-1">Companion Assisting:</span>
-                    <h4 class="fw-bold text-primary mb-0">{{ booking.companion_name or 'Silvercare Companion' }}</h4>
+                    <h4 class="fw-bold mb-0" style="color: var(--color-cocoa);">{{ booking.companion_name or 'Silvercare Companion' }}</h4>
                 </div>
 
                 <div class="mb-4 text-center">
                     <label class="form-label fw-bold d-block mb-3 fs-5">Overall Rating</label>
                     <div class="d-flex justify-content-center gap-3">
-                        <label class="p-3 border rounded-3 text-center cursor-pointer flex-fill">
-                            <input type="radio" name="rating" value="5" class="form-check-input d-block mx-auto mb-1" checked>
-                            <span class="fs-3">🌟🌟🌟🌟🌟</span>
+                        <label class="p-3 border rounded-3 text-center cursor-pointer flex-fill" style="border-color: var(--border-color) !important;">
+                            <input type="radio" name="rating" value="5" class="form-check-input d-block mx-auto mb-2" checked>
+                            <span class="fs-4" style="color: var(--color-caramel);">
+                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                            </span>
                             <span class="d-block small fw-bold mt-1">Excellent</span>
                         </label>
-                        <label class="p-3 border rounded-3 text-center cursor-pointer flex-fill">
-                            <input type="radio" name="rating" value="4" class="form-check-input d-block mx-auto mb-1">
-                            <span class="fs-3">🌟🌟🌟🌟</span>
+                        <label class="p-3 border rounded-3 text-center cursor-pointer flex-fill" style="border-color: var(--border-color) !important;">
+                            <input type="radio" name="rating" value="4" class="form-check-input d-block mx-auto mb-2">
+                            <span class="fs-4" style="color: var(--color-caramel);">
+                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                            </span>
                             <span class="d-block small fw-bold mt-1">Very Good</span>
                         </label>
-                        <label class="p-3 border rounded-3 text-center cursor-pointer flex-fill">
-                            <input type="radio" name="rating" value="3" class="form-check-input d-block mx-auto mb-1">
-                            <span class="fs-3">🌟🌟🌟</span>
+                        <label class="p-3 border rounded-3 text-center cursor-pointer flex-fill" style="border-color: var(--border-color) !important;">
+                            <input type="radio" name="rating" value="3" class="form-check-input d-block mx-auto mb-2">
+                            <span class="fs-4" style="color: var(--color-caramel);">
+                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                            </span>
                             <span class="d-block small fw-bold mt-1">Average</span>
                         </label>
                     </div>

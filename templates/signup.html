@@ -5,10 +5,10 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-lg-7 col-md-9">
-        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white" style="border: 1px solid var(--border-color) !important;">
             
             <div class="text-center mb-4">
-                <span class="fs-1">📝✨</span>
+                <i class="bi bi-person-plus fs-1 mb-2 d-block" style="color: var(--color-wine);"></i>
                 <h2 class="fw-bold mb-1">Create Your Account</h2>
                 <p class="text-muted">Safe, verified travel assistance starts here with secure OTP verification</p>
             </div>
@@ -16,21 +16,21 @@
             <form action="{{ url_for('signup') }}" method="POST">
                 
                 <!-- Role Selection -->
-                <div class="mb-4 p-3 bg-light rounded-3">
+                <div class="mb-4 p-3 rounded-3" style="background-color: var(--color-batter-light); border: 1px solid var(--border-color);">
                     <label class="form-label fw-bold d-block">Select Account Role:</label>
                     <div class="d-flex gap-4">
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="role" id="signupRoleTraveller" value="traveller" 
                                    {% if selected_role != 'companion' %}checked{% endif %}>
                             <label class="form-check-label fw-semibold" for="signupRoleTraveller">
-                                🧓 Traveller / Family Member
+                                <i class="bi bi-person me-1"></i> Traveller / Family Member
                             </label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="role" id="signupRoleCompanion" value="companion"
                                    {% if selected_role == 'companion' %}checked{% endif %}>
                             <label class="form-check-label fw-semibold" for="signupRoleCompanion">
-                                🧑‍💼 Travel Companion Guide
+                                <i class="bi bi-person-badge me-1"></i> Travel Companion Guide
                             </label>
                         </div>
                     </div>
@@ -45,8 +45,8 @@
                     <label class="form-label fw-bold">Email Address <span class="text-danger">*</span></label>
                     <input type="email" name="email" id="signupEmailInput" class="form-control form-control-lg" placeholder="name@example.com" required>
                     <div class="form-text text-muted">
-                        💡 <strong>Real Email</strong>: OTP dispatched over HTTPS (Port 443) via Google Apps Script.<br>
-                        💡 <strong>Demo Email</strong> (e.g. <code>myname@demo.com</code>): OTP will be displayed directly on screen for testing!
+                        <i class="bi bi-info-circle me-1"></i> <strong>Real Email</strong>: OTP dispatched over HTTPS (Port 443) via Google Apps Script.<br>
+                        <i class="bi bi-info-circle me-1"></i> <strong>Demo Email</strong> (e.g. <code>myname@demo.com</code>): OTP will be displayed directly on screen for testing!
                     </div>
                 </div>
 
@@ -74,14 +74,14 @@
             <!-- Quick Demo Button -->
             <div class="text-center mt-2">
                 <button type="button" class="btn btn-sm btn-outline-secondary" onclick="fillTestDemo()">
-                    ⚡ Use Demo Email (test@demo.com) for Instant On-Screen OTP
+                    <i class="bi bi-lightning-charge me-1"></i> Use Demo Email for Instant On-Screen OTP
                 </button>
             </div>
 
             <div class="text-center mt-4">
                 <p class="text-muted mb-0">
                     Already registered? 
-                    <a href="{{ url_for('login') }}" class="fw-bold text-primary text-decoration-none">
+                    <a href="{{ url_for('login') }}" class="fw-bold text-decoration-none" style="color: var(--color-wine);">
                         Log in here
                     </a>
                 </p>

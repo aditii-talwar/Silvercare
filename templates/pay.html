@@ -5,17 +5,17 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-7">
-        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white" style="border: 1px solid var(--border-color) !important;">
             <div class="text-center mb-4">
-                <div class="fs-1 text-success mb-2">💳✅</div>
+                <i class="bi bi-credit-card-2-front fs-1 mb-2 d-block" style="color: var(--color-wine);"></i>
                 <h2 class="fw-bold">Post-Journey Safe Payment</h2>
                 <p class="text-muted">Payment is only charged after the companion safely drops off the elderly passenger.</p>
             </div>
 
-            <div class="p-3 bg-light rounded-3 mb-4">
+            <div class="p-3 rounded-3 mb-4" style="background-color: var(--color-batter-light); border: 1px solid var(--border-color);">
                 <div class="d-flex justify-content-between mb-2">
                     <span class="text-muted">Booking Reference:</span>
-                    <strong class="text-primary">{{ booking.booking_code }}</strong>
+                    <strong style="color: var(--color-cocoa);">{{ booking.booking_code }}</strong>
                 </div>
                 <div class="d-flex justify-content-between mb-2">
                     <span class="text-muted">Passenger:</span>
@@ -23,12 +23,12 @@
                 </div>
                 <div class="d-flex justify-content-between mb-2">
                     <span class="text-muted">Trip:</span>
-                    <span>{{ booking.pickup_location }} ➔ {{ booking.destination }}</span>
+                    <span>{{ booking.pickup_location }} <i class="bi bi-arrow-right mx-1"></i> {{ booking.destination }}</span>
                 </div>
-                <hr>
+                <hr style="border-color: var(--border-color);">
                 <div class="d-flex justify-content-between fs-5 fw-bold text-dark">
                     <span>Total Service Amount:</span>
-                    <span class="text-success">₹{{ booking.total_fare }}</span>
+                    <span style="color: var(--color-wine);">₹{{ booking.total_fare }}</span>
                 </div>
                 <small class="text-muted d-block mt-1">Includes 3 hours dedicated companion & luggage assistance.</small>
             </div>
@@ -38,32 +38,32 @@
                 <label class="form-label fw-bold mb-3">Choose Simple Payment Method:</label>
 
                 <div class="list-group mb-4">
-                    <label class="list-group-item list-group-item-action d-flex align-items-center gap-3 p-3">
+                    <label class="list-group-item list-group-item-action d-flex align-items-center gap-3 p-3" style="border-color: var(--border-color);">
                         <input class="form-check-input flex-shrink-0" type="radio" name="payment_method" value="1-Click UPI / Google Pay / PhonePe" checked>
                         <div class="w-100">
-                            <strong class="mb-0">Instant 1-Click UPI (GPay / PhonePe / Paytm)</strong>
+                            <strong class="mb-0"><i class="bi bi-phone me-1"></i> Instant 1-Click UPI (GPay / PhonePe / Paytm)</strong>
                             <p class="small text-muted mb-0">Recommended: Tap and approve on your phone.</p>
                         </div>
                     </label>
 
-                    <label class="list-group-item list-group-item-action d-flex align-items-center gap-3 p-3">
+                    <label class="list-group-item list-group-item-action d-flex align-items-center gap-3 p-3" style="border-color: var(--border-color);">
                         <input class="form-check-input flex-shrink-0" type="radio" name="payment_method" value="Debit / Credit Card">
                         <div class="w-100">
-                            <strong class="mb-0">Debit or Credit Card</strong>
+                            <strong class="mb-0"><i class="bi bi-credit-card me-1"></i> Debit or Credit Card</strong>
                             <p class="small text-muted mb-0">Visa, Mastercard, RuPay.</p>
                         </div>
                     </label>
 
-                    <label class="list-group-item list-group-item-action d-flex align-items-center gap-3 p-3">
+                    <label class="list-group-item list-group-item-action d-flex align-items-center gap-3 p-3" style="border-color: var(--border-color);">
                         <input class="form-check-input flex-shrink-0" type="radio" name="payment_method" value="Cash Handover to Companion">
                         <div class="w-100">
-                            <strong class="mb-0">Direct Cash Handover to Companion</strong>
+                            <strong class="mb-0"><i class="bi bi-cash me-1"></i> Direct Cash Handover to Companion</strong>
                             <p class="small text-muted mb-0">Pay directly at the destination point.</p>
                         </div>
                     </label>
                 </div>
 
-                <button type="submit" class="btn btn-success btn-lg w-100 py-3 fw-bold fs-5 shadow-sm">
+                <button type="submit" class="btn btn-primary-custom btn-lg w-100 py-3 fw-bold fs-5 shadow-sm">
                     Confirm Payment of ₹{{ booking.total_fare }} <i class="bi bi-shield-check ms-1"></i>
                 </button>
             </form>

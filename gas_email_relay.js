@@ -33,22 +33,22 @@ function doPost(e) {
     }
 
     var htmlBody = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff;">
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 24px; border: 1px solid #E2D3BA; border-radius: 12px; background: #ffffff;">
         <div style="text-align: center; margin-bottom: 20px;">
-          <h2 style="color: #1A5F7A; margin: 0;">🧓🤝 Silvercare</h2>
-          <p style="color: #64748b; font-size: 14px; margin-top: 4px;">Dignified & Safe Travel for Elders</p>
+          <h2 style="color: #442D1C; margin: 0; letter-spacing: -0.5px;">Silvercare</h2>
+          <p style="color: #6B5848; font-size: 14px; margin-top: 4px;">Dignified & Safe Travel for Elders</p>
         </div>
         
-        <p style="font-size: 16px; color: #1e293b;">Hello <strong>${userName}</strong>,</p>
+        <p style="font-size: 16px; color: #2C1D12;">Hello <strong>${userName}</strong>,</p>
         <p style="font-size: 15px; color: #475569; line-height: 1.5;">
           Thank you for signing up with Silvercare. Please use the One-Time Password (OTP) below to verify your account and activate safe travel companion assistance.
         </p>
 
         <div style="text-align: center; margin: 30px 0;">
-          <div style="display: inline-block; background: #f0fdf4; border: 2px dashed #22c55e; border-radius: 10px; padding: 14px 32px; font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #15803d;">
+          <div style="display: inline-block; background: #FAF7F2; border: 2px dashed #743014; border-radius: 10px; padding: 14px 32px; font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #743014;">
             ${otp}
           </div>
-          <p style="color: #94a3b8; font-size: 13px; margin-top: 8px;">This code is valid for 10 minutes. Please do not share it with anyone.</p>
+          <p style="color: #6B5848; font-size: 13px; margin-top: 8px;">This code is valid for 10 minutes. Please do not share it with anyone.</p>
         </div>
 
         <hr style="border: none; border-top: 1px solid #f1f5f9; margin: 25px 0;">

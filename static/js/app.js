@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     const data = await res.json();
                     typingBubble.remove();
-                    appendMessage('bot', `🇮🇳 <strong>[${data.language_name}]</strong><br>${data.reply}`, true);
+                    appendMessage('bot', `<i class="bi bi-translate me-1"></i> <strong>[${data.language_name}]</strong><br>${data.reply}`, true);
                 } catch (err) {
                     typingBubble.remove();
                 }

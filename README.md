@@ -1,11 +1,11 @@
-# 🧓🤝 Silvercare - Elderly Travel & Companion Assistance Platform
+# Silvercare - Elderly Travel & Companion Assistance Platform
 
 > **Safe, dignified, and independent travel for senior citizens.**
 > Built with **Python & Flask** based on the **Product Development Canvas**, **Empathy Canvas**, and **Ideation Canvas**.
 
 ---
 
-## 🌟 Key Features
+## Key Features
 
 1. **Dual Role Authentication & OTP Verification**:
    - Distinct logins for **Traveller / Family** and **Companion**.
@@ -22,7 +22,7 @@
 4. **Verified Companions Directory**:
    - Police-verified badges, background check indicators, user ratings, and mobility skills.
 5. **Live Milestone & Reassurance Tracking**:
-   - Real-time journey tracking for families (Companion Assigned ➔ Arrived at Pickup ➔ In Transit ➔ Safely Reached) with auto-refreshing beacon.
+   - Real-time journey tracking for families (Companion Assigned -> Arrived at Pickup -> In Transit -> Safely Reached) with auto-refreshing beacon.
 6. **Companion Operations Portal**:
    - Companions can log in to view assigned trips and advance journey milestones.
 7. **Simplified Post-Task Payment & Reviews**:
@@ -31,7 +31,7 @@
 
 ---
 
-## 🚀 How to Run Locally on Your Computer
+## How to Run Locally on Your Computer
 
 ### Step 1: Open Terminal / Command Prompt
 Navigate to the project directory:
@@ -46,11 +46,11 @@ python app.py
 
 ### Step 3: Open in Browser
 Open your browser and visit:
-👉 **[http://127.0.0.1:5000](http://127.0.0.1:5000)**
+**[http://127.0.0.1:5000](http://127.0.0.1:5000)**
 
 ---
 
-## 🌐 How to Deploy for Free to the Cloud (Render.com)
+## How to Deploy for Free to the Cloud (Render.com)
 
 "Deploying" means putting this app onto a cloud server so anyone (teachers, judges, family members, or users) can open it on their phones with a public link (e.g. `https://silvercare.onrender.com`).
 
@@ -80,18 +80,18 @@ Here is the exact step-by-step procedure:
 5. Click **"Deploy Web Service"** at the bottom!
 
 Render will automatically build your app and give you a free live URL:
-🎉 **`https://silvercare-xxxx.onrender.com`**
+**`https://silvercare-xxxx.onrender.com`**
 
 Whenever you make changes to your code and push to GitHub (`git push`), Render will automatically update your live site!
 
 ---
 
-## 📧 Google Apps Script Email Relay (Port 443 / HTTPS)
+## Google Apps Script Email Relay (Port 443 / HTTPS)
 
 To deliver real OTP emails without being blocked by cloud providers on SMTP ports (25, 465, 587):
 1. Open [script.google.com](https://script.google.com/) and create a new project.
 2. Copy & paste the code from [gas_email_relay.js](file:///C:/Users/aditi/OneDrive/Desktop/Silvercare/gas_email_relay.js).
-3. Click **Deploy ➔ New deployment ➔ Web app**.
+3. Click **Deploy -> New deployment -> Web app**.
    - Execute as: **Me**
    - Who has access: **Anyone**
 4. Copy the Web App URL (`https://script.google.com/macros/s/.../exec`).
@@ -104,7 +104,7 @@ To deliver real OTP emails without being blocked by cloud providers on SMTP port
 
 ---
 
-## 🤖 Bhashini Multilingual AI (MeitY)
+## Bhashini Multilingual AI (MeitY)
 
 SilverBot is configured to work with the official Bhashini Dhruva / ULCA API.
 - **Offline / Default**: Functions out-of-the-box in 7 languages (Hindi, Gujarati, Marathi, Bengali, Tamil, Telugu, English) using native domain dictionaries.

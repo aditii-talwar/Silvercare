@@ -7,18 +7,18 @@
     <div class="col-lg-9">
 
         <!-- Top Status Card -->
-        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white" style="border: 1px solid var(--border-color) !important;">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
                 <div>
-                    <span class="badge bg-primary px-3 py-2 fs-6 rounded-pill">Booking ID: {{ booking.booking_code }}</span>
+                    <span class="badge px-3 py-2 fs-6 rounded-pill" style="background-color: var(--color-cocoa); color: white;">Booking ID: {{ booking.booking_code }}</span>
                     <h2 class="fw-bold mt-2 mb-0">Journey to {{ booking.destination }}</h2>
                     <p class="text-muted mb-0">
-                        <i class="bi bi-clock-history"></i> {{ booking.service_date }} at {{ booking.service_time }}
+                        <i class="bi bi-clock-history me-1"></i> {{ booking.service_date }} at {{ booking.service_time }}
                     </p>
                 </div>
                 <div class="text-end">
                     <span class="small text-muted d-block">Current Status:</span>
-                    <span class="badge bg-success fs-5 px-3 py-2 rounded-3" id="currentStatusBadge">
+                    <span class="badge fs-5 px-3 py-2 rounded-3" id="currentStatusBadge" style="background-color: var(--color-olive); color: white;">
                         {{ booking.status }}
                     </span>
                 </div>
@@ -26,19 +26,21 @@
         </div>
 
         <!-- Companion & Reassurance Card -->
-        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
-            <h4 class="fw-bold mb-3 text-primary"><i class="bi bi-shield-check"></i> Assigned Verified Companion</h4>
+        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white" style="border: 1px solid var(--border-color) !important;">
+            <h4 class="fw-bold mb-3" style="color: var(--color-cocoa);"><i class="bi bi-shield-check me-1"></i> Assigned Verified Companion</h4>
             {% if booking.companion_name %}
-            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 p-3 bg-light rounded-3">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 p-3 rounded-3" style="background-color: var(--color-batter-light); border: 1px solid var(--border-color);">
                 <div class="d-flex align-items-center gap-3">
-                    <span class="fs-1 p-2 bg-white rounded-circle shadow-sm">{{ booking.photo_emoji or '🧑‍💼' }}</span>
+                    <div class="companion-avatar-icon">
+                        <i class="bi bi-person-check-fill"></i>
+                    </div>
                     <div>
                         <h4 class="fw-bold mb-0">{{ booking.companion_name }}</h4>
                         <div class="verified-badge mt-1">
-                            <i class="bi bi-patch-check-fill"></i> Police & Govt Verified
+                            <i class="bi bi-patch-check-fill text-success"></i> Police & Govt Verified
                         </div>
                         <div class="small text-muted mt-1">
-                            <span class="text-warning fw-bold"><i class="bi bi-star-fill"></i> {{ booking.companion_rating or '4.9' }}</span>
+                            <span class="fw-bold" style="color: var(--color-caramel);"><i class="bi bi-star-fill"></i> {{ booking.companion_rating or '4.9' }}</span>
                             • {{ booking.trips_completed or 35 }}+ Safe Trips Completed
                         </div>
                     </div>
@@ -51,14 +53,14 @@
             </div>
             {% else %}
             <div class="alert alert-warning mb-0">
-                <i class="bi bi-hourglass-split"></i> Matching with the nearest verified companion in your locality...
+                <i class="bi bi-hourglass-split me-1"></i> Matching with the nearest verified companion in your locality...
             </div>
             {% endif %}
         </div>
 
-        <!-- Live Journey Milestones (From Empathy & Product Canvases) -->
-        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
-            <h4 class="fw-bold mb-4 text-primary"><i class="bi bi-signpost-split-fill"></i> Real-Time Journey Milestones</h4>
+        <!-- Live Journey Milestones -->
+        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white" style="border: 1px solid var(--border-color) !important;">
+            <h4 class="fw-bold mb-4" style="color: var(--color-cocoa);"><i class="bi bi-signpost-split-fill me-1"></i> Real-Time Journey Milestones</h4>
 
             {% set statuses = ['Companion Assigned', 'Arrived at Pickup', 'In Transit', 'Completed'] %}
             
@@ -121,14 +123,14 @@
             </div>
 
             <!-- Simulated Live GPS Box -->
-            <div class="p-3 border rounded-3 bg-light mt-3">
+            <div class="p-3 border rounded-3 mt-3" style="background-color: var(--color-batter-light); border-color: var(--border-color) !important;">
                 <div class="d-flex align-items-center justify-content-between mb-2">
-                    <span class="fw-bold text-dark"><i class="bi bi-broadcast text-danger"></i> Live GPS Reassurance Beacon</span>
-                    <span class="badge bg-success-subtle text-success border border-success-subtle">Signal Active</span>
+                    <span class="fw-bold text-dark"><i class="bi bi-broadcast text-danger me-1"></i> Live GPS Reassurance Beacon</span>
+                    <span class="badge border" style="background-color: var(--color-batter-subtle); color: var(--color-cocoa);">Signal Active</span>
                 </div>
-                <div class="p-3 bg-white rounded-3 border text-center">
-                    <div class="fs-2 mb-1">📍🗺️</div>
-                    <p class="mb-0 fw-semibold text-primary">Companion is currently with {{ booking.elderly_name }}</p>
+                <div class="p-3 bg-white rounded-3 border text-center" style="border-color: var(--border-color) !important;">
+                    <i class="bi bi-geo-alt-fill fs-2 mb-1 d-block" style="color: var(--color-wine);"></i>
+                    <p class="mb-0 fw-semibold" style="color: var(--color-cocoa);">Companion is currently with {{ booking.elderly_name }}</p>
                     <small class="text-muted">En route to {{ booking.destination }} • Assistance: {{ booking.assistance_needed }}</small>
                 </div>
             </div>
@@ -136,10 +138,10 @@
 
         <!-- Post-Journey Actions (Payment & Review) -->
         {% if booking.status == 'Completed' %}
-        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-success-subtle border-success">
+        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4" style="background-color: var(--color-batter-subtle); border: 1px solid var(--border-color) !important;">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
                 <div>
-                    <h4 class="fw-bold text-success mb-1">🎉 Journey Safely Completed!</h4>
+                    <h4 class="fw-bold mb-1" style="color: var(--color-cocoa);"><i class="bi bi-check-circle-fill text-success me-1"></i> Journey Safely Completed</h4>
                     <p class="mb-0 text-muted">
                         {% if booking.payment_status == 'Paid' %}
                         Payment of ₹{{ booking.total_fare }} received. Thank you!
@@ -150,12 +152,12 @@
                 </div>
                 <div class="d-flex gap-2">
                     {% if booking.payment_status != 'Paid' %}
-                    <a href="{{ url_for('pay', booking_code=booking.booking_code) }}" class="btn btn-success btn-lg">
-                        <i class="bi bi-credit-card"></i> Pay ₹{{ booking.total_fare }}
+                    <a href="{{ url_for('pay', booking_code=booking.booking_code) }}" class="btn btn-primary-custom btn-lg">
+                        <i class="bi bi-credit-card me-1"></i> Pay ₹{{ booking.total_fare }}
                     </a>
                     {% endif %}
-                    <a href="{{ url_for('review', booking_code=booking.booking_code) }}" class="btn btn-warning btn-lg fw-bold text-dark">
-                        <i class="bi bi-star-fill"></i> Rate Companion
+                    <a href="{{ url_for('review', booking_code=booking.booking_code) }}" class="btn btn-secondary-custom btn-lg">
+                        <i class="bi bi-star-fill me-1"></i> Rate Companion
                     </a>
                 </div>
             </div>
@@ -163,9 +165,9 @@
         {% endif %}
 
         <!-- Quick Demo Note -->
-        <div class="alert alert-info border-0 shadow-sm rounded-3">
-            <i class="bi bi-info-circle-fill me-1"></i>
-            <strong>Testing Tip:</strong> To see this screen update in real-time, open the <a href="{{ url_for('companion_portal') }}" target="_blank" class="fw-bold text-decoration-underline">Companion Portal</a> in another tab and advance the status!
+        <div class="alert alert-light border shadow-sm rounded-3" style="border-color: var(--border-color) !important;">
+            <i class="bi bi-info-circle-fill me-1" style="color: var(--color-caramel);"></i>
+            <strong>Testing Tip:</strong> To see this screen update in real-time, open the <a href="{{ url_for('companion_portal') }}" target="_blank" class="fw-bold text-decoration-underline" style="color: var(--color-wine);">Companion Portal</a> in another tab and advance the status!
         </div>
 
     </div>

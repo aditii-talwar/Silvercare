@@ -5,37 +5,37 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-lg-6 col-md-8">
-        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white text-center">
+        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white text-center" style="border: 1px solid var(--border-color) !important;">
             
             <div class="mb-3">
-                <span class="fs-1">📩🔐</span>
+                <i class="bi bi-shield-check fs-1 mb-2 d-block" style="color: var(--color-wine);"></i>
                 <h2 class="fw-bold mb-1">Verify Your Email</h2>
                 <p class="text-muted">
                     We sent a 6-digit verification code to:<br>
-                    <strong class="text-primary fs-5">{{ email }}</strong>
+                    <strong class="fs-5" style="color: var(--color-cocoa);">{{ email }}</strong>
                 </p>
             </div>
 
             <!-- Demo Mode On-Screen OTP Banner -->
             {% if demo_otp %}
-            <div class="alert alert-warning border-warning border-2 p-3 rounded-4 mb-4 text-start shadow-sm">
+            <div class="alert p-3 rounded-4 mb-4 text-start shadow-sm" style="background-color: var(--color-batter-light); border: 2px solid var(--color-batter);">
                 <div class="d-flex align-items-center gap-2 mb-2">
-                    <span class="fs-4">💡</span>
+                    <i class="bi bi-info-circle fs-4" style="color: var(--color-caramel);"></i>
                     <div>
-                        <strong class="text-dark d-block">Demo Mode Detected!</strong>
+                        <strong class="text-dark d-block">Demo Mode Detected</strong>
                         <small class="text-muted">Since this is a demo email or local test, your OTP is generated right here:</small>
                     </div>
                 </div>
-                <div class="p-3 bg-white rounded-3 border text-center my-2">
-                    <span class="display-6 fw-bold text-success letter-spacing-2" id="demoOtpDisplay">{{ demo_otp }}</span>
+                <div class="p-3 bg-white rounded-3 border text-center my-2" style="border-color: var(--border-color) !important;">
+                    <span class="display-6 fw-bold letter-spacing-2" id="demoOtpDisplay" style="color: var(--color-wine);">{{ demo_otp }}</span>
                 </div>
-                <button type="button" class="btn btn-sm btn-outline-success w-100 fw-bold mt-1" onclick="autoFillOtp('{{ demo_otp }}')">
-                    <i class="bi bi-box-arrow-in-down"></i> Click to Auto-Fill This OTP
+                <button type="button" class="btn btn-sm btn-outline-custom w-100 fw-bold mt-1" onclick="autoFillOtp('{{ demo_otp }}')">
+                    <i class="bi bi-box-arrow-in-down me-1"></i> Click to Auto-Fill This OTP
                 </button>
             </div>
             {% else %}
-            <div class="alert alert-info py-2 small mb-4">
-                <i class="bi bi-info-circle-fill me-1"></i> Please check your inbox and spam folder. Request routed over HTTPS Port 443 via Google Apps Script.
+            <div class="alert alert-light border py-2 small mb-4" style="border-color: var(--border-color) !important;">
+                <i class="bi bi-info-circle-fill me-1" style="color: var(--color-caramel);"></i> Please check your inbox and spam folder. Request routed over HTTPS Port 443 via Google Apps Script.
             </div>
             {% endif %}
 
@@ -53,7 +53,7 @@
 
             <div class="text-center mt-3">
                 <a href="{{ url_for('signup') }}" class="small text-muted text-decoration-none">
-                    <i class="bi bi-arrow-left"></i> Change email address or start over
+                    <i class="bi bi-arrow-left me-1"></i> Change email address or start over
                 </a>
             </div>
 

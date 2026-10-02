@@ -5,19 +5,19 @@
 {% block content %}
 <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
     <div>
-        <h2 class="fw-bold mb-1"><i class="bi bi-person-badge text-primary"></i> Verified Companion Portal</h2>
+        <h2 class="fw-bold mb-1" style="color: var(--color-cocoa);"><i class="bi bi-person-badge me-2" style="color: var(--color-wine);"></i> Verified Companion Portal</h2>
         <p class="text-muted mb-0">Manage assigned elder assistance requests and provide real-time updates.</p>
     </div>
-    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 fs-6 rounded-pill">
-        🟢 Active Companion On-Duty
+    <span class="badge px-3 py-2 fs-6 rounded-pill" style="background-color: var(--color-batter-subtle); color: var(--color-cocoa); border: 1px solid var(--border-color);">
+        <i class="bi bi-circle-fill text-success me-1"></i> Active Companion On-Duty
     </span>
 </div>
 
 <div class="row g-4">
     {% if not bookings %}
     <div class="col-12">
-        <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
-            <div class="fs-1 mb-3">📋</div>
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white" style="border: 1px solid var(--border-color) !important;">
+            <i class="bi bi-clipboard-x fs-1 mb-3 text-muted"></i>
             <h4 class="fw-bold">No Bookings Yet</h4>
             <p class="text-muted">Create a test booking to see it appear on the companion dashboard.</p>
             <div>
@@ -29,60 +29,60 @@
 
     {% for b in bookings %}
     <div class="col-lg-6">
-        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100 d-flex flex-column justify-content-between">
+        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100 d-flex flex-column justify-content-between" style="border: 1px solid var(--border-color) !important;">
             <div>
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div>
-                        <span class="badge bg-primary rounded-pill mb-1">{{ b.booking_code }}</span>
+                        <span class="badge rounded-pill mb-1" style="background-color: var(--color-cocoa); color: white;">{{ b.booking_code }}</span>
                         <h4 class="fw-bold mb-0">Passenger: {{ b.elderly_name }}</h4>
                         <small class="text-muted">Booked by: {{ b.booked_by }} ({{ b.booker_name }} - {{ b.booker_phone }})</small>
                     </div>
-                    <span class="badge {% if b.status == 'Completed' %}bg-success{% elif b.status == 'In Transit' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %} px-3 py-2 rounded-3">
+                    <span class="badge px-3 py-2 rounded-3" style="background-color: var(--color-batter-subtle); color: var(--color-cocoa); border: 1px solid var(--border-color);">
                         {{ b.status }}
                     </span>
                 </div>
 
-                <div class="p-3 bg-light rounded-3 mb-3">
+                <div class="p-3 rounded-3 mb-3" style="background-color: var(--color-batter-light); border: 1px solid var(--border-color);">
                     <div class="mb-2">
-                        <strong class="text-danger"><i class="bi bi-geo-alt-fill"></i> Pickup:</strong> {{ b.pickup_location }}
+                        <strong class="text-danger"><i class="bi bi-geo-alt-fill me-1"></i> Pickup:</strong> {{ b.pickup_location }}
                     </div>
                     <div class="mb-2">
-                        <strong class="text-primary"><i class="bi bi-pin-map-fill"></i> Destination:</strong> {{ b.destination }} ({{ b.destination_type }})
+                        <strong style="color: var(--color-wine);"><i class="bi bi-pin-map-fill me-1"></i> Destination:</strong> {{ b.destination }} ({{ b.destination_type }})
                     </div>
                     <div class="small text-muted">
-                        <i class="bi bi-calendar3"></i> <strong>Schedule:</strong> {{ b.service_date }} at {{ b.service_time }}
+                        <i class="bi bi-calendar3 me-1"></i> <strong>Schedule:</strong> {{ b.service_date }} at {{ b.service_time }}
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <strong class="small text-dark d-block mb-1">Assistance Required:</strong>
-                    <span class="badge bg-secondary-subtle text-dark border p-2">{{ b.assistance_needed }}</span>
+                    <span class="badge-tag">{{ b.assistance_needed }}</span>
                 </div>
 
                 {% if b.notes %}
-                <div class="mb-3 p-2 bg-warning-subtle border-start border-warning border-3 rounded-1 small">
+                <div class="mb-3 p-2 rounded-1 small" style="background-color: var(--color-batter-subtle); border-left: 3px solid var(--color-caramel);">
                     <strong>Special Instructions:</strong> {{ b.notes }}
                 </div>
                 {% endif %}
             </div>
 
             <!-- Action Buttons for Companion to advance progress -->
-            <div class="border-top pt-3 mt-3">
+            <div class="border-top pt-3 mt-3" style="border-color: var(--border-color) !important;">
                 <label class="form-label fw-bold small text-muted">Update Journey Status (Sends Family Live Update):</label>
                 <div class="d-flex flex-wrap gap-2">
                     <form action="{{ url_for('update_status', booking_id=b.id, new_status='Arrived at Pickup') }}" method="POST">
-                        <button type="submit" class="btn btn-sm btn-outline-primary" {% if b.status == 'Arrived at Pickup' or b.status == 'In Transit' or b.status == 'Completed' %}disabled{% endif %}>
-                            📍 Arrived at Pickup
+                        <button type="submit" class="btn btn-sm btn-outline-secondary" {% if b.status == 'Arrived at Pickup' or b.status == 'In Transit' or b.status == 'Completed' %}disabled{% endif %}>
+                            <i class="bi bi-geo-alt me-1"></i> Arrived at Pickup
                         </button>
                     </form>
                     <form action="{{ url_for('update_status', booking_id=b.id, new_status='In Transit') }}" method="POST">
-                        <button type="submit" class="btn btn-sm btn-outline-warning text-dark" {% if b.status == 'In Transit' or b.status == 'Completed' %}disabled{% endif %}>
-                            🧳 In Transit
+                        <button type="submit" class="btn btn-sm btn-outline-secondary" {% if b.status == 'In Transit' or b.status == 'Completed' %}disabled{% endif %}>
+                            <i class="bi bi-person-walking me-1"></i> In Transit
                         </button>
                     </form>
                     <form action="{{ url_for('update_status', booking_id=b.id, new_status='Completed') }}" method="POST">
                         <button type="submit" class="btn btn-sm btn-outline-success" {% if b.status == 'Completed' %}disabled{% endif %}>
-                            ✅ Reached & Completed
+                            <i class="bi bi-check-circle me-1"></i> Reached & Completed
                         </button>
                     </form>
                     <a href="{{ url_for('track', booking_code=b.booking_code) }}" target="_blank" class="btn btn-sm btn-light border ms-auto">

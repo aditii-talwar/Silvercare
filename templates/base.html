@@ -8,17 +8,17 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Custom Style -->
+    <!-- Custom Style with Squarespace Palette -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
     <!-- Top Accessibility & Emergency Bar -->
-    <div class="bg-light border-bottom py-1">
+    <div class="bg-white border-bottom py-1">
         <div class="container d-flex justify-content-between align-items-center small text-muted">
-            <span>🛡️ 100% Police Verified Companions & Live GPS Reassurance</span>
+            <span><i class="bi bi-shield-check text-success me-1"></i> 100% Police Verified Companions & Live GPS Reassurance</span>
             <div class="d-flex align-items-center gap-3">
-                <a href="tel:112" class="text-danger fw-bold text-decoration-none"><i class="bi bi-telephone-fill"></i> 24x7 Safety Helpline: 112 / 1090</a>
+                <a href="tel:112" class="text-danger fw-bold text-decoration-none"><i class="bi bi-telephone-fill me-1"></i> 24x7 Safety Helpline: 112 / 1090</a>
             </div>
         </div>
     </div>
@@ -27,7 +27,7 @@
     <nav class="navbar navbar-expand-xl sticky-top">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('index') }}">
-                <span class="fs-2">🧓🤝</span> Silvercare
+                <i class="bi bi-heart-pulse-fill brand-icon"></i> Silvercare
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
                 <span class="navbar-toggler-icon"></span>
@@ -35,26 +35,26 @@
             <div class="collapse navbar-collapse" id="navMenu">
                 <ul class="navbar-nav ms-auto mb-2 mb-xl-0 align-items-xl-center gap-1">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('index') }}"><i class="bi bi-house-door"></i> Home</a>
+                        <a class="nav-link" href="{{ url_for('index') }}"><i class="bi bi-house-door me-1"></i> Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('book') }}"><i class="bi bi-calendar-check"></i> Book Companion</a>
+                        <a class="nav-link" href="{{ url_for('book') }}"><i class="bi bi-calendar-check me-1"></i> Book Companion</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('track') }}"><i class="bi bi-geo-alt"></i> Track Journey</a>
+                        <a class="nav-link" href="{{ url_for('track') }}"><i class="bi bi-geo-alt me-1"></i> Track Journey</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('companions_list') }}"><i class="bi bi-shield-check"></i> Verified Guides</a>
+                        <a class="nav-link" href="{{ url_for('companions_list') }}"><i class="bi bi-shield-check me-1"></i> Verified Guides</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-primary fw-bold" href="{{ url_for('companion_portal') }}"><i class="bi bi-person-badge"></i> Companion Portal</a>
+                        <a class="nav-link fw-bold" href="{{ url_for('companion_portal') }}"><i class="bi bi-person-badge me-1"></i> Companion Portal</a>
                     </li>
                     
                     <!-- Auth State Navigation -->
                     {% if current_user %}
                     <li class="nav-item dropdown ms-xl-2">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-1 p-1 px-2 border rounded-pill bg-light" href="#" role="button" data-bs-toggle="dropdown">
-                            <span class="badge {% if current_user.role == 'companion' %}bg-warning text-dark{% else %}bg-primary{% endif %} rounded-pill">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-1 p-1 px-3 border rounded-pill bg-light" href="#" role="button" data-bs-toggle="dropdown">
+                            <span class="badge bg-secondary rounded-pill">
                                 {{ current_user.role|capitalize }}
                             </span>
                             <span class="small fw-bold text-dark">{{ current_user.name }}</span>
@@ -73,16 +73,16 @@
                     </li>
                     {% else %}
                     <li class="nav-item ms-xl-2">
-                        <a class="nav-link" href="{{ url_for('login') }}"><i class="bi bi-box-arrow-in-right"></i> Log In</a>
+                        <a class="nav-link" href="{{ url_for('login') }}"><i class="bi bi-box-arrow-in-right me-1"></i> Log In</a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-sm btn-outline-primary fw-bold rounded-pill px-3 py-1" href="{{ url_for('signup') }}">Sign Up</a>
+                        <a class="btn btn-sm btn-outline-custom px-3 py-1" href="{{ url_for('signup') }}">Sign Up</a>
                     </li>
                     {% endif %}
 
                     <li class="nav-item ms-xl-2">
                         <button type="button" class="emergency-btn" data-bs-toggle="modal" data-bs-target="#sosModal">
-                            <i class="bi bi-bell-fill"></i> SOS Alert
+                            <i class="bi bi-exclamation-triangle-fill"></i> SOS Alert
                         </button>
                     </li>
                 </ul>
@@ -111,16 +111,16 @@
 
     <!-- Floating AI Assistant Button & Window (Powered by Bhashini AI) -->
     <button class="chatbot-toggler" id="chatbotToggler" title="Chat with SilverBot (Bhashini Multilingual AI)">
-        🤖
+        <i class="bi bi-chat-dots-fill"></i>
     </button>
 
     <div class="chat-window" id="chatWindow">
         <div class="chat-header">
             <div class="d-flex align-items-center gap-2">
-                <span class="fs-4">🤖</span>
+                <i class="bi bi-chat-text-fill fs-4 text-white"></i>
                 <div>
                     <div class="fw-bold">SilverBot Assistant</div>
-                    <small style="opacity: 0.88; font-size: 0.75rem;">🇮🇳 MeitY Bhashini Multilingual AI</small>
+                    <small style="opacity: 0.88; font-size: 0.75rem;">MeitY Bhashini Multilingual AI</small>
                 </div>
             </div>
             <button type="button" class="btn-close btn-close-white" id="closeChatBtn"></button>
@@ -128,11 +128,11 @@
 
         <!-- Bhashini Language Selector Bar -->
         <div class="px-3 py-2 bg-light border-bottom d-flex align-items-center justify-content-between">
-            <span class="small fw-bold text-muted"><i class="bi bi-translate text-primary"></i> Language:</span>
+            <span class="small fw-bold text-muted"><i class="bi bi-translate text-primary me-1"></i> Language:</span>
             <select id="chatLanguageSelect" class="form-select form-select-sm" style="width: auto; font-weight: 600; font-size: 0.85rem;">
                 {% for code, lang in supported_languages.items() %}
                 <option value="{{ code }}" {% if code == current_language %}selected{% endif %}>
-                    {{ lang.flag }} {{ lang.native }} ({{ lang.name }})
+                    {{ lang.native }} ({{ lang.name }})
                 </option>
                 {% endfor %}
             </select>
@@ -140,7 +140,7 @@
 
         <div class="chat-body" id="chatBody">
             <div class="chat-bubble bot" id="botInitialGreeting">
-                Namaste! 🙏 I am <strong>SilverBot</strong>, your travel assistant powered by <strong>Bhashini AI</strong>. Select your language above or type your question!
+                Welcome. I am <strong>SilverBot</strong>, your travel assistant powered by <strong>Bhashini AI</strong>. Select your language above or type your question below!
             </div>
         </div>
         <form class="chat-input-area" id="chatForm">
@@ -152,19 +152,19 @@
     <!-- Footer -->
     <footer>
         <div class="container text-center">
-            <h5 class="fw-bold mb-2 text-primary">Silvercare — Travel Safely & Independently</h5>
+            <h5 class="fw-bold mb-2">Silvercare — Travel Safely & Independently</h5>
             <p class="small text-muted mb-3">
                 Empowering elderly citizens with verified, compassionate travel companions handling tickets, luggage, boarding & navigation.
             </p>
             <div class="d-flex justify-content-center gap-3 small">
-                <span>🔒 Police-Verified Guides</span>
+                <span><i class="bi bi-shield-check me-1"></i> Police-Verified Guides</span>
                 <span>•</span>
-                <span>📍 Live Reassurance for Families</span>
+                <span><i class="bi bi-geo-alt me-1"></i> Live Reassurance for Families</span>
                 <span>•</span>
-                <span>💳 Post-Task Safe Payment</span>
+                <span><i class="bi bi-credit-card me-1"></i> Post-Task Safe Payment</span>
             </div>
             <hr class="my-3 opacity-25">
-            <p class="small text-muted mb-0">© 2026 Silvercare. Ready for deployment on Render / PythonAnywhere.</p>
+            <p class="small text-muted mb-0">© 2026 Silvercare. Ready for deployment on Render.</p>
         </div>
     </footer>
 
@@ -187,7 +187,7 @@
                     <div class="d-grid gap-2 mb-4">
                         <a href="tel:112" class="btn btn-outline-danger btn-lg text-start d-flex align-items-center justify-content-between p-3 rounded-3">
                             <div>
-                                <strong class="fs-5 d-block">🚨 Call 112 (National Emergency)</strong>
+                                <strong class="fs-5 d-block"><i class="bi bi-telephone-fill me-2 text-danger"></i> Call 112 (National Emergency)</strong>
                                 <small class="text-muted">Police, Fire & Emergency Response</small>
                             </div>
                             <i class="bi bi-telephone-outbound-fill fs-3 text-danger"></i>
@@ -195,7 +195,7 @@
 
                         <a href="tel:1090" class="btn btn-outline-primary btn-lg text-start d-flex align-items-center justify-content-between p-3 rounded-3">
                             <div>
-                                <strong class="fs-5 d-block text-primary">🧓 Call 1090 (Senior Citizen Helpline)</strong>
+                                <strong class="fs-5 d-block"><i class="bi bi-shield-shaded me-2 text-primary"></i> Call 1090 (Senior Citizen Helpline)</strong>
                                 <small class="text-muted">Dedicated elderly safety & assistance helpline</small>
                             </div>
                             <i class="bi bi-telephone-outbound-fill fs-3 text-primary"></i>
@@ -203,7 +203,7 @@
 
                         <a href="tel:108" class="btn btn-outline-danger btn-lg text-start d-flex align-items-center justify-content-between p-3 rounded-3">
                             <div>
-                                <strong class="fs-5 d-block">🚑 Call 108 (Medical Ambulance)</strong>
+                                <strong class="fs-5 d-block"><i class="bi bi-hospital me-2 text-danger"></i> Call 108 (Medical Ambulance)</strong>
                                 <small class="text-muted">Immediate medical emergency & trauma care</small>
                             </div>
                             <i class="bi bi-telephone-outbound-fill fs-3 text-danger"></i>
@@ -212,13 +212,13 @@
 
                     <!-- Instant GPS Alert Broadcast Simulation -->
                     <div class="p-3 bg-light rounded-3 border">
-                        <h6 class="fw-bold mb-1 text-dark"><i class="bi bi-geo-alt-fill text-danger"></i> Broadcast Location to Family</h6>
+                        <h6 class="fw-bold mb-1 text-dark"><i class="bi bi-geo-alt-fill text-danger me-1"></i> Broadcast Location to Family</h6>
                         <p class="small text-muted mb-2">Simulate sending an urgent SMS alert with live GPS coordinates to family contacts.</p>
                         <button type="button" class="btn btn-danger w-100 fw-bold py-2" id="triggerSosAlertBtn" onclick="dispatchSosAlert()">
                             <i class="bi bi-broadcast me-1"></i> Send Emergency SOS to Family
                         </button>
                         <div id="sosAlertSuccess" class="alert alert-success mt-2 mb-0 py-2 small fw-bold" style="display: none;">
-                            ✅ Emergency alert dispatched! Live coordinates shared with emergency contacts & companion team.
+                            <i class="bi bi-check-circle-fill me-1"></i> Emergency alert dispatched! Live coordinates shared with emergency contacts & companion team.
                         </div>
                     </div>
                 </div>

@@ -5,9 +5,11 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-lg-8">
-        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white" style="border: 1px solid var(--border-color) !important;">
             <div class="d-flex align-items-center gap-3 mb-4">
-                <span class="fs-1 text-primary">🤝📋</span>
+                <div class="companion-avatar-icon">
+                    <i class="bi bi-clipboard-check fs-2"></i>
+                </div>
                 <div>
                     <h2 class="fw-bold mb-1">Book a Verified Companion</h2>
                     <p class="text-muted mb-0">Fill in the journey details. A vetted guide will be matched immediately.</p>
@@ -16,19 +18,19 @@
 
             <form action="{{ url_for('book') }}" method="POST" id="bookingForm">
                 <!-- Who is booking? -->
-                <div class="mb-4 p-3 bg-light rounded-3">
+                <div class="mb-4 p-3 rounded-3" style="background-color: var(--color-batter-light); border: 1px solid var(--border-color);">
                     <label class="form-label fw-bold d-block">Who is booking this trip?</label>
                     <div class="d-flex gap-4">
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="booked_by" id="roleElder" value="Elderly Citizen (Self)" checked onchange="toggleElderFields()">
                             <label class="form-check-label fw-semibold" for="roleElder">
-                                🧓 For Myself (Elderly Citizen)
+                                <i class="bi bi-person me-1"></i> For Myself (Elderly Citizen)
                             </label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="booked_by" id="roleFamily" value="Family Member (Child/Relative)" onchange="toggleElderFields()">
                             <label class="form-check-label fw-semibold" for="roleFamily">
-                                👨‍👩‍👧 On Behalf of Parent / Relative
+                                <i class="bi bi-people me-1"></i> On Behalf of Parent / Relative
                             </label>
                         </div>
                     </div>
@@ -38,7 +40,7 @@
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
                         <label class="form-label fw-bold" id="bookerNameLabel">Your Full Name <span class="text-danger">*</span></label>
-                        <input type="text" name="booker_name" class="form-control form-control-lg" placeholder="e.g. Ramesh Chandra" required>
+                        <input type="text" name="booker_name" class="form-control form-control-lg" value="{{ prefill.booker_name }}" placeholder="e.g. Ramesh Chandra" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold" id="bookerPhoneLabel">Contact Phone Number <span class="text-danger">*</span></label>
@@ -68,22 +70,22 @@
                     <div class="form-text">Your companion will arrive directly at this address to assist.</div>
                 </div>
 
-                <!-- Destination with Quick Presets (Addresses Canvas pain point) -->
+                <!-- Destination with Quick Presets -->
                 <div class="mb-4">
                     <label class="form-label fw-bold">Destination / Travel Goal <span class="text-danger">*</span></label>
                     <div class="input-group mb-2">
-                        <span class="input-group-text"><i class="bi bi-pin-map-fill text-primary"></i></span>
+                        <span class="input-group-text"><i class="bi bi-pin-map-fill" style="color: var(--color-wine);"></i></span>
                         <input type="text" name="destination" id="destinationInput" value="{{ prefill.destination }}" class="form-control form-control-lg" placeholder="e.g. Central Railway Station Platform 4" required>
                     </div>
 
                     <!-- Presets -->
-                    <div class="small text-muted mb-2">⚡ Quick 1-Click Suggestions:</div>
+                    <div class="small text-muted mb-2"><i class="bi bi-lightning-charge me-1"></i> Quick 1-Click Suggestions:</div>
                     <div class="d-flex flex-wrap gap-2">
-                        <button type="button" class="btn btn-sm btn-outline-secondary preset-destination" data-location="City Central Railway Station" data-type="Railway Station">🚆 Central Railway Station</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary preset-destination" data-location="Apollo / Max Super Speciality Hospital" data-type="Hospital">🏥 City Hospital OPD</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary preset-destination" data-location="Terminal 3, International Airport" data-type="Airport">✈️ Airport Terminal 3</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary preset-destination" data-location="State Bank Main Branch" data-type="Bank">🏦 State Bank Branch</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary preset-destination" data-location="Local Temple & Market" data-type="Market">🛕 Temple / Market</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary preset-destination" data-location="City Central Railway Station" data-type="Railway Station"><i class="bi bi-train-front me-1"></i> Central Railway Station</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary preset-destination" data-location="Apollo / Max Super Speciality Hospital" data-type="Hospital"><i class="bi bi-hospital me-1"></i> City Hospital OPD</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary preset-destination" data-location="Terminal 3, International Airport" data-type="Airport"><i class="bi bi-airplane me-1"></i> Airport Terminal 3</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary preset-destination" data-location="State Bank Main Branch" data-type="Bank"><i class="bi bi-bank me-1"></i> State Bank Branch</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary preset-destination" data-location="Local Market & Commercial Center" data-type="Market"><i class="bi bi-shop me-1"></i> Market / Commercial Center</button>
                     </div>
 
                     <div class="mt-3">
@@ -93,7 +95,7 @@
                             <option value="Hospital" {% if prefill.destination_type == 'Hospital' %}selected{% endif %}>Hospital / Clinic</option>
                             <option value="Airport" {% if prefill.destination_type == 'Airport' %}selected{% endif %}>Airport</option>
                             <option value="Bank" {% if prefill.destination_type == 'Bank' %}selected{% endif %}>Bank / Govt Office</option>
-                            <option value="Market" {% if prefill.destination_type == 'Market' %}selected{% endif %}>Market / Grocery / Temple</option>
+                            <option value="Market" {% if prefill.destination_type == 'Market' %}selected{% endif %}>Market / Daily Visit</option>
                             <option value="Other">Other</option>
                         </select>
                     </div>
@@ -111,39 +113,39 @@
                     </div>
                 </div>
 
-                <!-- Assistance Needed (Ideation Canvas Props) -->
+                <!-- Assistance Needed -->
                 <div class="mb-4">
                     <label class="form-label fw-bold">Assistance Needed (Select all that apply)</label>
                     <div class="row g-2">
                         <div class="col-md-6">
-                            <div class="form-check p-2 border rounded-3 bg-light">
+                            <div class="form-check p-2 border rounded-3" style="background-color: var(--color-batter-light); border-color: var(--border-color) !important;">
                                 <input class="form-check-input ms-1" type="checkbox" name="assistance" value="Wheelchair Support" id="asstWheelchair" {% if 'Wheelchair' in prefill.assistance %}checked{% endif %}>
                                 <label class="form-check-label ms-2 fw-semibold" for="asstWheelchair">
-                                    ♿ Wheelchair Support
+                                    <i class="bi bi-wheelchair me-2"></i> Wheelchair Support
                                 </label>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="form-check p-2 border rounded-3 bg-light">
+                            <div class="form-check p-2 border rounded-3" style="background-color: var(--color-batter-light); border-color: var(--border-color) !important;">
                                 <input class="form-check-input ms-1" type="checkbox" name="assistance" value="Heavy Luggage & Trolley Handling" id="asstLuggage" {% if 'Luggage' in prefill.assistance %}checked{% endif %}>
                                 <label class="form-check-label ms-2 fw-semibold" for="asstLuggage">
-                                    🧳 Luggage & Trolley Handling
+                                    <i class="bi bi-suitcase-lg me-2"></i> Luggage & Trolley Handling
                                 </label>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="form-check p-2 border rounded-3 bg-light">
+                            <div class="form-check p-2 border rounded-3" style="background-color: var(--color-batter-light); border-color: var(--border-color) !important;">
                                 <input class="form-check-input ms-1" type="checkbox" name="assistance" value="Ticket Verification & Boarding Guide" id="asstTickets" checked>
                                 <label class="form-check-label ms-2 fw-semibold" for="asstTickets">
-                                    🎟️ Ticket & Boarding Guidance
+                                    <i class="bi bi-ticket-perforated me-2"></i> Ticket & Boarding Guidance
                                 </label>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="form-check p-2 border rounded-3 bg-light">
+                            <div class="form-check p-2 border rounded-3" style="background-color: var(--color-batter-light); border-color: var(--border-color) !important;">
                                 <input class="form-check-input ms-1" type="checkbox" name="assistance" value="Walking Stick / Gentle Pace Support" id="asstWalking">
                                 <label class="form-check-label ms-2 fw-semibold" for="asstWalking">
-                                    🦯 Walking Support & Slow Pace
+                                    <i class="bi bi-person-walking me-2"></i> Walking Support & Slow Pace
                                 </label>
                             </div>
                         </div>
@@ -157,12 +159,12 @@
                 </div>
 
                 <!-- Pricing Transparency -->
-                <div class="p-3 mb-4 rounded-3 border bg-light d-flex justify-content-between align-items-center">
+                <div class="p-3 mb-4 rounded-3 border d-flex justify-content-between align-items-center" style="background-color: var(--color-batter-light); border-color: var(--border-color) !important;">
                     <div>
                         <span class="fw-bold fs-5 text-dark">Estimated Fee: ₹450</span>
                         <div class="small text-muted">Includes complete companion assistance for up to 3 hours.</div>
                     </div>
-                    <span class="badge bg-success text-white px-3 py-2 fs-6">Pay After Safe Drop-off</span>
+                    <span class="badge px-3 py-2 fs-6" style="background-color: var(--color-olive); color: white;">Pay After Safe Drop-off</span>
                 </div>
 
                 <button type="submit" class="btn btn-primary-custom btn-lg w-100 py-3 fs-5">
