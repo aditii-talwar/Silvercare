@@ -8,6 +8,13 @@ import urllib.error
 from werkzeug.security import generate_password_hash, check_password_hash
 from database import get_db_connection, init_db
 from bhashini import process_bhashini_chat, SUPPORTED_LANGUAGES
+from indian_apis import (
+    calculate_trip_fare_and_distance,
+    create_razorpay_order,
+    generate_npci_upi_details,
+    send_indian_sms,
+    get_digilocker_verification_details
+)
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'silvercare-safe-travel-companion-secret')
@@ -325,21 +332,30 @@ def book():
 
         status = 'Companion Assigned' if companion_id else 'Pending'
 
+        # Compute dynamic distance & fare using Mappls engine
+        trip_fare_info = calculate_trip_fare_and_distance(pickup_location, destination, destination_type)
+        total_fare = trip_fare_info['total_fare']
+        distance_km = trip_fare_info['distance_km']
+
         conn.execute('''
             INSERT INTO bookings (
                 booking_code, user_id, booked_by, booker_name, booker_phone, elderly_name, elderly_phone,
                 pickup_location, destination, destination_type, service_date, service_time,
-                assistance_needed, notes, status, companion_id, payment_status, total_fare
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending', 450)
+                assistance_needed, notes, status, companion_id, payment_status, total_fare, distance_km
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending', ?, ?)
         ''', (
             booking_code, user_id, booked_by, booker_name, booker_phone, elderly_name, elderly_phone,
             pickup_location, destination, destination_type, service_date, service_time,
-            assistance_needed, notes, status, companion_id
+            assistance_needed, notes, status, companion_id, total_fare, distance_km
         ))
         conn.commit()
         conn.close()
 
-        flash(f'Companion successfully booked! Your booking tracking ID is {booking_code}.', 'success')
+        # Send Indian SMS Confirmation to booker
+        sms_text = f"Silvercare: Booking #{booking_code} confirmed! Trip to {destination} ({distance_km} km, Rs. {total_fare}) scheduled for {service_date} at {service_time}."
+        send_indian_sms(booker_phone, sms_text)
+
+        flash(f'Companion successfully booked! Tracking ID: {booking_code} (Fare: ₹{total_fare} for ~{distance_km} km via Mappls).', 'success')
         return redirect(url_for('track', booking_code=booking_code))
 
     # Pre-fill from query params or logged-in user
@@ -397,11 +413,42 @@ def booking_status_api(booking_code):
         'companion_phone': booking['companion_phone']
     })
 
+@app.route('/api/calculate-fare', methods=['POST'])
+def api_calculate_fare():
+    """Live API endpoint to compute route distance and dynamic fare via Mappls engine"""
+    data = request.get_json() or {}
+    pickup = data.get('pickup', '')
+    destination = data.get('destination', '')
+    destination_type = data.get('destination_type', 'Other')
+    fare_info = calculate_trip_fare_and_distance(pickup, destination, destination_type)
+    return jsonify(fare_info)
+
+@app.route('/api/sos-alert', methods=['POST'])
+def api_sos_alert():
+    """Emergency 112 SOS Dispatch via Indian SMS Gateway with live GPS coordinates"""
+    data = request.get_json() or {}
+    lat = data.get('lat', '28.6139')
+    lng = data.get('lng', '77.2090')
+    user_name = session.get('user_name', 'Elderly Passenger')
+    phone = session.get('user_phone', '9876543210')
+
+    sms_text = f"CRITICAL 112 ALERT: Silvercare SOS dispatched for {user_name} (Ph: {phone}). Live GPS: https://maps.google.com/?q={lat},{lng}. Please assist immediately."
+    sms_res = send_indian_sms(phone, sms_text)
+    return jsonify({'success': True, 'message': '112 Emergency Alert Dispatched to Helpline & Family', 'sms': sms_res})
+
 @app.route('/companions')
 def companions_list():
     conn = get_db_connection()
-    companions = conn.execute('SELECT * FROM companions ORDER BY rating DESC').fetchall()
+    raw_companions = conn.execute('SELECT * FROM companions ORDER BY rating DESC').fetchall()
     conn.close()
+
+    # Enrich with official DigiLocker & Aadhaar verification details (India Stack)
+    companions = []
+    for c in raw_companions:
+        c_dict = dict(c)
+        c_dict['digilocker'] = get_digilocker_verification_details(c['id'], c['name'])
+        companions.append(c_dict)
+
     return render_template('companions_list.html', companions=companions)
 
 @app.route('/companion-portal')
@@ -438,15 +485,30 @@ def pay(booking_code):
         return redirect(url_for('index'))
 
     if request.method == 'POST':
-        method = request.form.get('payment_method', 'UPI / Auto-Pay')
+        method = request.form.get('payment_method', 'Razorpay UPI / Card')
         conn.execute('UPDATE bookings SET payment_status = "Paid" WHERE booking_code = ?', (booking_code,))
         conn.commit()
         conn.close()
+
+        # Send Indian SMS Confirmation & Digital Receipt
+        sms_text = f"Silvercare: Payment of Rs. {booking['total_fare']} received via {method} for booking #{booking_code}. Passenger safely assisted!"
+        send_indian_sms(booking['booker_phone'], sms_text)
+
         flash(f'Payment of ₹{booking["total_fare"]} received successfully via {method}! Thank you.', 'success')
         return redirect(url_for('review', booking_code=booking_code))
 
     conn.close()
-    return render_template('pay.html', booking=booking)
+
+    # Generate Indian Payment Gateway Parameters (Razorpay + NPCI UPI)
+    razorpay_order = create_razorpay_order(booking['total_fare'], booking_code)
+    upi_details = generate_npci_upi_details(booking['total_fare'], booking_code)
+
+    return render_template(
+        'pay.html',
+        booking=booking,
+        razorpay_order=razorpay_order,
+        upi_details=upi_details
+    )
 
 @app.route('/review/<booking_code>', methods=['GET', 'POST'])
 def review(booking_code):

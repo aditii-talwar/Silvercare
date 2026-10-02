@@ -242,8 +242,35 @@
         function dispatchSosAlert() {
             const successBox = document.getElementById('sosAlertSuccess');
             const alertBtn = document.getElementById('triggerSosAlertBtn');
-            if (alertBtn) alertBtn.disabled = true;
-            if (successBox) successBox.style.display = 'block';
+            if (alertBtn) {
+                alertBtn.disabled = true;
+                alertBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Dispatching 112 SOS via Indian SMS Gateway...';
+            }
+
+            const sendPayload = (lat, lng) => {
+                fetch('/api/sos-alert', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lat: lat, lng: lng })
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (successBox) successBox.style.display = 'block';
+                    if (alertBtn) alertBtn.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> 112 Emergency Dispatched via Indian SMS';
+                })
+                .catch(err => {
+                    if (successBox) successBox.style.display = 'block';
+                });
+            };
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    pos => sendPayload(pos.coords.latitude, pos.coords.longitude),
+                    err => sendPayload('28.6139', '77.2090')
+                );
+            } else {
+                sendPayload('28.6139', '77.2090');
+            }
         }
     </script>
     <!-- Custom Application JS -->

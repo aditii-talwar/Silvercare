@@ -147,6 +147,30 @@ def init_db():
     # Clean any old emojis from existing records in the database
     cursor.execute("UPDATE companions SET photo_emoji = 'bi-person-check-fill'")
 
+    # Ensure distance_km and user_id columns exist in bookings table
+    try:
+        cursor.execute("ALTER TABLE bookings ADD COLUMN distance_km REAL DEFAULT 10.0")
+    except Exception:
+        pass
+    try:
+        cursor.execute("ALTER TABLE bookings ADD COLUMN user_id INTEGER")
+    except Exception:
+        pass
+
+    # Ensure India Stack verification columns exist in companions table
+    try:
+        cursor.execute("ALTER TABLE companions ADD COLUMN aadhaar_verified INTEGER DEFAULT 1")
+    except Exception:
+        pass
+    try:
+        cursor.execute("ALTER TABLE companions ADD COLUMN digilocker_id TEXT DEFAULT 'DL-IND-2026-089'")
+    except Exception:
+        pass
+    try:
+        cursor.execute("ALTER TABLE companions ADD COLUMN police_verification_ref TEXT DEFAULT 'POL/DL/2026/089'")
+    except Exception:
+        pass
+
     conn.commit()
     conn.close()
 

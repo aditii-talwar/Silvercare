@@ -14,6 +14,11 @@
                     <h2 class="fw-bold mt-2 mb-0">Journey to {{ booking.destination }}</h2>
                     <p class="text-muted mb-0">
                         <i class="bi bi-clock-history me-1"></i> {{ booking.service_date }} at {{ booking.service_time }}
+                        {% if booking.distance_km %}
+                        • <span class="badge rounded-pill text-white" style="background-color: var(--color-olive);">
+                            <i class="bi bi-geo-alt me-1"></i> ~{{ booking.distance_km }} km (Mappls)
+                          </span>
+                        {% endif %}
                     </p>
                 </div>
                 <div class="text-end">
@@ -36,8 +41,13 @@
                     </div>
                     <div>
                         <h4 class="fw-bold mb-0">{{ booking.companion_name }}</h4>
-                        <div class="verified-badge mt-1">
-                            <i class="bi bi-patch-check-fill text-success"></i> Police & Govt Verified
+                        <div class="d-flex flex-wrap gap-2 my-1">
+                            <span class="verified-badge">
+                                <i class="bi bi-patch-check-fill text-success"></i> Police & Govt Verified
+                            </span>
+                            <span class="badge rounded-pill" style="background-color: var(--color-batter); color: var(--color-cocoa);">
+                                <i class="bi bi-shield-lock-fill me-1"></i> DigiLocker e-KYC Verified
+                            </span>
                         </div>
                         <div class="small text-muted mt-1">
                             <span class="fw-bold" style="color: var(--color-caramel);"><i class="bi bi-star-fill"></i> {{ booking.companion_rating or '4.9' }}</span>

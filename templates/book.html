@@ -158,13 +158,30 @@
                     <textarea name="notes" class="form-control" rows="2" placeholder="e.g. Needs reminder for BP medicine at 11 AM; coach seat S4-22"></textarea>
                 </div>
 
-                <!-- Pricing Transparency -->
-                <div class="p-3 mb-4 rounded-3 border d-flex justify-content-between align-items-center" style="background-color: var(--color-batter-light); border-color: var(--border-color) !important;">
-                    <div>
-                        <span class="fw-bold fs-5 text-dark">Estimated Fee: ₹450</span>
-                        <div class="small text-muted">Includes complete companion assistance for up to 3 hours.</div>
+                <!-- Live Mappls Route Distance & Transparent Dynamic Fare Breakdown -->
+                <div class="p-3 mb-4 rounded-3 border" style="background-color: var(--color-batter-light); border-color: var(--border-color) !important;">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                        <div>
+                            <span class="badge px-2 py-1 small rounded-pill text-white" style="background-color: var(--color-olive);">
+                                <i class="bi bi-geo-alt-fill me-1"></i> Mappls Distance Engine
+                            </span>
+                            <h4 class="fw-bold mt-1 mb-0" id="fareTotalDisplay" style="color: var(--color-cocoa);">Estimated Fare: ₹425</h4>
+                        </div>
+                        <div class="text-sm-end">
+                            <span class="badge fs-6 px-3 py-1 rounded-pill text-white" style="background-color: var(--color-wine);" id="fareDistanceBadge">
+                                <i class="bi bi-signpost-split me-1"></i> ~16.5 km
+                            </span>
+                            <small class="d-block text-muted mt-1" id="fareDurationBadge"><i class="bi bi-clock me-1"></i> ~45 mins transit</small>
+                        </div>
                     </div>
-                    <span class="badge px-3 py-2 fs-6" style="background-color: var(--color-olive); color: white;">Pay After Safe Drop-off</span>
+                    <hr class="my-2" style="border-color: var(--border-color);">
+                    <div class="small text-muted d-flex flex-wrap justify-content-between gap-2">
+                        <span>Base Fare (First 4 km): <strong>₹200</strong></span>
+                        <span>Distance Fare: <strong id="fareExtraDisplay">+₹225 (@ ₹18/km)</strong></span>
+                        <span class="text-success fw-bold"><i class="bi bi-shield-check me-1"></i> Pay after safe drop-off</span>
+                    </div>
+                    <input type="hidden" name="estimated_distance" id="estimatedDistanceInput" value="16.5">
+                    <input type="hidden" name="estimated_fare" id="estimatedFareInput" value="425">
                 </div>
 
                 <button type="submit" class="btn btn-primary-custom btn-lg w-100 py-3 fs-5">
@@ -195,5 +212,44 @@
             elderName.required = false;
         }
     }
+
+    function updateDynamicFare() {
+        const dest = document.getElementById('destinationInput').value.trim();
+        const destType = document.getElementById('destinationTypeSelect').value;
+        const pickupInput = document.querySelector('input[name="pickup_location"]');
+        const pickup = pickupInput ? pickupInput.value.trim() : '';
+
+        fetch('/api/calculate-fare', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pickup: pickup, destination: dest, destination_type: destType })
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('fareTotalDisplay').innerText = `Estimated Fare: ₹${data.total_fare}`;
+            document.getElementById('fareDistanceBadge').innerHTML = `<i class="bi bi-signpost-split me-1"></i> ~${data.distance_km} km`;
+            document.getElementById('fareDurationBadge').innerHTML = `<i class="bi bi-clock me-1"></i> ~${data.duration_mins} mins transit`;
+            document.getElementById('fareExtraDisplay').innerText = `+₹${data.extra_fare} (@ ₹${data.per_km_rate}/km for extra ${data.extra_km} km)`;
+            document.getElementById('estimatedDistanceInput').value = data.distance_km;
+            document.getElementById('estimatedFareInput').value = data.total_fare;
+        })
+        .catch(err => console.log('Fare calculation notice:', err));
+    }
+
+    document.querySelectorAll('.preset-destination').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.getElementById('destinationInput').value = this.dataset.location;
+            document.getElementById('destinationTypeSelect').value = this.dataset.type;
+            updateDynamicFare();
+        });
+    });
+
+    document.getElementById('destinationInput').addEventListener('input', updateDynamicFare);
+    document.getElementById('destinationTypeSelect').addEventListener('change', updateDynamicFare);
+    const pickupField = document.querySelector('input[name="pickup_location"]');
+    if (pickupField) pickupField.addEventListener('input', updateDynamicFare);
+    
+    // Initial calculation on load
+    updateDynamicFare();
 </script>
 {% endblock %}

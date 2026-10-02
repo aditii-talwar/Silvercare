@@ -1,23 +1,26 @@
 {% extends 'base.html' %}
 
-{% block title %}Verified Companions - Silvercare{% endblock %}
+{% block title %}Verified Companions Directory - Silvercare{% endblock %}
 
 {% block content %}
-<div class="mb-4">
-    <h2 class="fw-bold mb-1">Our Police-Verified Companions</h2>
-    <p class="text-muted">
-        Every Silvercare companion is thoroughly vetted through police background checks, ID verification, and trained in mobility, luggage handling, and senior empathy.
+<div class="text-center max-w-700 mx-auto mb-5">
+    <span class="badge px-3 py-2 rounded-pill mb-2 fw-bold" style="background-color: var(--color-batter); color: var(--color-cocoa);">
+        <i class="bi bi-shield-check me-1"></i> DigiLocker & India Stack Verified
+    </span>
+    <h2 class="display-6 fw-bold">Our Trusted Travel Companions</h2>
+    <p class="text-muted fs-5">
+        Every companion undergoes rigorous 3-tier vetting: UIDAI Aadhaar e-KYC, DigiLocker police verification, and first-aid/mobility assistance training.
     </p>
 </div>
 
-<!-- Trust & Verification Pillars -->
+<!-- India Stack Trust Pillars -->
 <div class="row g-3 mb-5">
     <div class="col-md-4">
         <div class="p-3 bg-white rounded-3 border d-flex align-items-center gap-3" style="border-color: var(--border-color) !important;">
-            <i class="bi bi-shield-check fs-1" style="color: var(--color-wine);"></i>
+            <i class="bi bi-shield-check fs-1 text-success"></i>
             <div>
-                <h6 class="fw-bold mb-0">Police Background Check</h6>
-                <small class="text-muted">100% verified criminal history & ID</small>
+                <h6 class="fw-bold mb-0">DigiLocker & Police Certified</h6>
+                <small class="text-muted">100% verified criminal history & UIDAI e-KYC</small>
             </div>
         </div>
     </div>
@@ -54,10 +57,15 @@
                         <h4 class="fw-bold mb-0">{{ c.name }}</h4>
                         <span class="fw-bold fs-5" style="color: var(--color-caramel);"><i class="bi bi-star-fill"></i> {{ c.rating }}</span>
                     </div>
-                    <div class="verified-badge my-1">
-                        <i class="bi bi-patch-check-fill text-success"></i> Police & Govt Verified
+                    <div class="d-flex flex-wrap gap-2 my-1">
+                        <span class="verified-badge">
+                            <i class="bi bi-patch-check-fill text-success"></i> Police & Govt Verified
+                        </span>
+                        <span class="badge rounded-pill" style="background-color: var(--color-batter); color: var(--color-cocoa);">
+                            <i class="bi bi-shield-lock-fill me-1"></i> DigiLocker e-KYC
+                        </span>
                     </div>
-                    <div class="small text-muted">
+                    <div class="small text-muted mt-1">
                         <i class="bi bi-check2-circle text-success me-1"></i> {{ c.trips_completed }} Trips Assisted • <i class="bi bi-telephone-fill ms-1 me-1"></i> {{ c.phone }}
                     </div>
                 </div>
@@ -65,11 +73,18 @@
 
             <p class="text-muted mb-3">{{ c.bio }}</p>
 
-            <div class="mb-4">
+            <div class="mb-3">
                 <small class="fw-bold text-dark d-block mb-1">Key Assistance Skills:</small>
                 {% for skill in c.skills.split(',') %}
                 <span class="badge-tag">{{ skill.strip() }}</span>
                 {% endfor %}
+            </div>
+
+            <!-- India Stack Verified Credentials Trigger -->
+            <div class="mb-3">
+                <button type="button" class="btn btn-sm btn-outline-custom w-100 py-1" data-bs-toggle="modal" data-bs-target="#idModal{{ c.id }}">
+                    <i class="bi bi-file-earmark-check me-1"></i> View DigiLocker India Stack Certificate
+                </button>
             </div>
 
             <div class="mt-auto d-flex justify-content-between align-items-center border-top pt-3" style="border-color: var(--border-color) !important;">
@@ -79,6 +94,54 @@
                 <a href="{{ url_for('book') }}" class="btn btn-primary-custom">
                     Request This Companion
                 </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- DigiLocker / Aadhaar India Stack Modal -->
+    <div class="modal fade" id="idModal{{ c.id }}" tabindex="-1" aria-labelledby="idModalLabel{{ c.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, var(--color-cocoa), var(--color-wine));">
+                    <h5 class="modal-title fw-bold" id="idModalLabel{{ c.id }}">
+                        <i class="bi bi-shield-fill-check me-2 text-warning"></i> DigiLocker Verified Credentials
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+                    <div class="p-3 bg-white rounded-3 border mb-3 text-center" style="border-color: var(--border-color) !important;">
+                        <i class="bi bi-patch-check-fill text-success fs-1 mb-2 d-block"></i>
+                        <h5 class="fw-bold mb-1">{{ c.name }}</h5>
+                        <span class="badge bg-success px-3 py-1 rounded-pill">100% Authenticated via India Stack</span>
+                    </div>
+
+                    <div class="list-group shadow-sm">
+                        <div class="list-group-item d-flex justify-content-between align-items-center py-2">
+                            <span class="text-muted small">Aadhaar (UIDAI e-KYC):</span>
+                            <strong class="text-dark">{{ c.digilocker.aadhaar_masked }}</strong>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center py-2">
+                            <span class="text-muted small">Police Clearance Cert:</span>
+                            <strong class="text-dark">{{ c.digilocker.police_clearance_cert }}</strong>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center py-2">
+                            <span class="text-muted small">DigiLocker Doc ID:</span>
+                            <code class="text-dark fw-bold">{{ c.digilocker.digilocker_doc_id }}</code>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center py-2">
+                            <span class="text-muted small">Issuing Authority:</span>
+                            <span class="small fw-semibold text-end text-dark">Govt of India - Police Dept</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center py-2">
+                            <span class="text-muted small">Audit Validity:</span>
+                            <span class="badge bg-success-subtle text-success fw-bold">Active through 2027</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-white border-0 py-2">
+                    <button type="button" class="btn btn-secondary px-4 rounded-3" data-bs-dismiss="modal">Close</button>
+                    <a href="{{ url_for('book') }}" class="btn btn-primary-custom px-4 rounded-3">Request {{ c.name }}</a>
+                </div>
             </div>
         </div>
     </div>
