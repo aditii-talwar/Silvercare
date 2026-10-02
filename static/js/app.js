@@ -1,13 +1,14 @@
 // Silvercare Client-side Script
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Chatbot Widget Setup
+    // 1. Bhashini Multilingual Chatbot Widget Setup
     const toggler = document.getElementById('chatbotToggler');
     const chatWindow = document.getElementById('chatWindow');
     const closeBtn = document.getElementById('closeChatBtn');
     const chatForm = document.getElementById('chatForm');
     const chatInput = document.getElementById('chatInput');
     const chatBody = document.getElementById('chatBody');
+    const langSelect = document.getElementById('chatLanguageSelect');
 
     if (toggler && chatWindow) {
         toggler.addEventListener('click', () => {
@@ -23,24 +24,47 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+        // When user switches language in Bhashini selector
+        if (langSelect) {
+            langSelect.addEventListener('change', async () => {
+                const selectedLang = langSelect.value;
+                const typingBubble = appendMessage('bot', 'Switching language with Bhashini AI...');
+
+                try {
+                    const res = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: '', language: selectedLang })
+                    });
+                    const data = await res.json();
+                    typingBubble.remove();
+                    appendMessage('bot', `🇮🇳 <strong>[${data.language_name}]</strong><br>${data.reply}`, true);
+                } catch (err) {
+                    typingBubble.remove();
+                }
+            });
+        }
+
         if (chatForm) {
             chatForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const msg = chatInput.value.trim();
                 if (!msg) return;
 
+                const selectedLang = langSelect ? langSelect.value : 'en';
+
                 // Append user message
                 appendMessage('user', msg);
                 chatInput.value = '';
 
                 // Typing indicator
-                const typingBubble = appendMessage('bot', 'SilverBot is typing...');
+                const typingBubble = appendMessage('bot', 'SilverBot is typing with Bhashini AI...');
 
                 try {
                     const res = await fetch('/api/chat', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ message: msg })
+                        body: JSON.stringify({ message: msg, language: selectedLang })
                     });
                     const data = await res.json();
                     typingBubble.remove();
@@ -52,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     appendMessage('bot', replyContent, true);
                 } catch (err) {
                     typingBubble.remove();
-                    appendMessage('bot', "Sorry, I am temporarily having trouble connecting. Please try again.");
+                    appendMessage('bot', "Sorry, I am temporarily having trouble connecting to Bhashini AI. Please try again.");
                 }
             });
         }

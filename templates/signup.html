@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign Up with OTP - Silvercare{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7 col-md-9">
+        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+            
+            <div class="text-center mb-4">
+                <span class="fs-1">📝✨</span>
+                <h2 class="fw-bold mb-1">Create Your Account</h2>
+                <p class="text-muted">Safe, verified travel assistance starts here with secure OTP verification</p>
+            </div>
+
+            <form action="{{ url_for('signup') }}" method="POST">
+                
+                <!-- Role Selection -->
+                <div class="mb-4 p-3 bg-light rounded-3">
+                    <label class="form-label fw-bold d-block">Select Account Role:</label>
+                    <div class="d-flex gap-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="role" id="signupRoleTraveller" value="traveller" 
+                                   {% if selected_role != 'companion' %}checked{% endif %}>
+                            <label class="form-check-label fw-semibold" for="signupRoleTraveller">
+                                🧓 Traveller / Family Member
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="role" id="signupRoleCompanion" value="companion"
+                                   {% if selected_role == 'companion' %}checked{% endif %}>
+                            <label class="form-check-label fw-semibold" for="signupRoleCompanion">
+                                🧑‍💼 Travel Companion Guide
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Full Name <span class="text-danger">*</span></label>
+                    <input type="text" name="name" class="form-control form-control-lg" placeholder="e.g. Ramesh Chandra / Aditi Rao" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Email Address <span class="text-danger">*</span></label>
+                    <input type="email" name="email" id="signupEmailInput" class="form-control form-control-lg" placeholder="name@example.com" required>
+                    <div class="form-text text-muted">
+                        💡 <strong>Real Email</strong>: OTP dispatched over HTTPS (Port 443) via Google Apps Script.<br>
+                        💡 <strong>Demo Email</strong> (e.g. <code>myname@demo.com</code>): OTP will be displayed directly on screen for testing!
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Mobile Phone Number</label>
+                    <input type="tel" name="phone" class="form-control form-control-lg" placeholder="e.g. +91 98765 43210">
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Password <span class="text-danger">*</span></label>
+                        <input type="password" name="password" class="form-control form-control-lg" placeholder="Create password" required minlength="4">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Confirm Password <span class="text-danger">*</span></label>
+                        <input type="password" name="confirm_password" class="form-control form-control-lg" placeholder="Re-enter password" required minlength="4">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary-custom btn-lg w-100 py-3 fs-5 mb-3">
+                    Generate & Send OTP <i class="bi bi-shield-lock-fill ms-1"></i>
+                </button>
+            </form>
+
+            <!-- Quick Demo Button -->
+            <div class="text-center mt-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="fillTestDemo()">
+                    ⚡ Use Demo Email (test@demo.com) for Instant On-Screen OTP
+                </button>
+            </div>
+
+            <div class="text-center mt-4">
+                <p class="text-muted mb-0">
+                    Already registered? 
+                    <a href="{{ url_for('login') }}" class="fw-bold text-primary text-decoration-none">
+                        Log in here
+                    </a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function fillTestDemo() {
+        document.getElementById('signupEmailInput').value = 'user' + Math.floor(Math.random() * 900 + 100) + '@demo.com';
+    }
+</script>
+{% endblock %}

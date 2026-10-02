@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - Silvercare{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+            
+            <div class="text-center mb-4">
+                <span class="fs-1">🔐</span>
+                <h2 class="fw-bold mb-1">Welcome to Silvercare</h2>
+                <p class="text-muted">Choose your role to log in to your portal</p>
+            </div>
+
+            <!-- Role Selector Tabs -->
+            <ul class="nav nav-pills nav-fill mb-4 p-1 bg-light rounded-pill" id="loginRoleTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link rounded-pill fw-bold {% if selected_role != 'companion' %}active{% endif %}" 
+                            id="traveller-tab" data-bs-toggle="pill" data-bs-target="#traveller-login" type="button" role="tab"
+                            onclick="setRole('traveller')">
+                        🧓 Traveller / Family
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link rounded-pill fw-bold {% if selected_role == 'companion' %}active{% endif %}" 
+                            id="companion-tab" data-bs-toggle="pill" data-bs-target="#companion-login" type="button" role="tab"
+                            onclick="setRole('companion')">
+                        🧑‍💼 Companion
+                    </button>
+                </li>
+            </ul>
+
+            <form action="{{ url_for('login') }}" method="POST">
+                <input type="hidden" name="role" id="loginRoleInput" value="{{ selected_role }}">
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Email Address</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+                        <input type="email" name="email" id="emailInput" class="form-control form-control-lg" 
+                               placeholder="e.g. traveller@demo.com" required>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                        <input type="password" name="password" id="passwordInput" class="form-control form-control-lg" 
+                               placeholder="Enter your password" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary-custom btn-lg w-100 py-3 fs-5 mb-3">
+                    Log In <i class="bi bi-arrow-right-circle ms-1"></i>
+                </button>
+            </form>
+
+            <!-- Quick Demo Credentials Box for Judges / Testing -->
+            <div class="p-3 bg-light border rounded-3 mt-2">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="small fw-bold text-dark"><i class="bi bi-stars text-warning"></i> Quick 1-Click Demo Logins:</span>
+                </div>
+                <div class="d-flex gap-2 mt-2">
+                    <button type="button" class="btn btn-sm btn-outline-primary flex-fill" onclick="fillDemo('traveller@demo.com', 'demo123', 'traveller')">
+                        🧓 Traveller Demo
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary flex-fill" onclick="fillDemo('companion@demo.com', 'demo123', 'companion')">
+                        🧑‍💼 Companion Demo
+                    </button>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <p class="text-muted mb-0">
+                    New to Silvercare? 
+                    <a href="{{ url_for('signup', role=selected_role) }}" class="fw-bold text-primary text-decoration-none">
+                        Create an account with OTP
+                    </a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function setRole(role) {
+        document.getElementById('loginRoleInput').value = role;
+    }
+
+    function fillDemo(email, pass, role) {
+        document.getElementById('emailInput').value = email;
+        document.getElementById('passwordInput').value = pass;
+        setRole(role);
+        
+        if (role === 'companion') {
+            const compTab = new bootstrap.Tab(document.getElementById('companion-tab'));
+            compTab.show();
+        } else {
+            const travTab = new bootstrap.Tab(document.getElementById('traveller-tab'));
+            travTab.show();
+        }
+    }
+</script>
+{% endblock %}

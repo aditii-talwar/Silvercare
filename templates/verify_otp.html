@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Verify OTP - Silvercare{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white text-center">
+            
+            <div class="mb-3">
+                <span class="fs-1">📩🔐</span>
+                <h2 class="fw-bold mb-1">Verify Your Email</h2>
+                <p class="text-muted">
+                    We sent a 6-digit verification code to:<br>
+                    <strong class="text-primary fs-5">{{ email }}</strong>
+                </p>
+            </div>
+
+            <!-- Demo Mode On-Screen OTP Banner -->
+            {% if demo_otp %}
+            <div class="alert alert-warning border-warning border-2 p-3 rounded-4 mb-4 text-start shadow-sm">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="fs-4">💡</span>
+                    <div>
+                        <strong class="text-dark d-block">Demo Mode Detected!</strong>
+                        <small class="text-muted">Since this is a demo email or local test, your OTP is generated right here:</small>
+                    </div>
+                </div>
+                <div class="p-3 bg-white rounded-3 border text-center my-2">
+                    <span class="display-6 fw-bold text-success letter-spacing-2" id="demoOtpDisplay">{{ demo_otp }}</span>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-success w-100 fw-bold mt-1" onclick="autoFillOtp('{{ demo_otp }}')">
+                    <i class="bi bi-box-arrow-in-down"></i> Click to Auto-Fill This OTP
+                </button>
+            </div>
+            {% else %}
+            <div class="alert alert-info py-2 small mb-4">
+                <i class="bi bi-info-circle-fill me-1"></i> Please check your inbox and spam folder. Request routed over HTTPS Port 443 via Google Apps Script.
+            </div>
+            {% endif %}
+
+            <form action="{{ url_for('verify_otp') }}" method="POST">
+                <div class="mb-4">
+                    <label class="form-label fw-bold small text-muted">ENTER 6-DIGIT CODE</label>
+                    <input type="text" name="otp" id="otpInputField" class="form-control form-control-lg text-center fw-bold fs-3" 
+                           placeholder="••••••" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" required autofocus>
+                </div>
+
+                <button type="submit" class="btn btn-primary-custom btn-lg w-100 py-3 fs-5 mb-3">
+                    Verify & Activate Account <i class="bi bi-check-circle-fill ms-1"></i>
+                </button>
+            </form>
+
+            <div class="text-center mt-3">
+                <a href="{{ url_for('signup') }}" class="small text-muted text-decoration-none">
+                    <i class="bi bi-arrow-left"></i> Change email address or start over
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function autoFillOtp(code) {
+        const input = document.getElementById('otpInputField');
+        if (input) {
+            input.value = code;
+            input.focus();
+        }
+    }
+</script>
+{% endblock %}

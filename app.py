@@ -1,10 +1,19 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 import random
 import string
+import os
+import json
+import urllib.request
+import urllib.error
+from werkzeug.security import generate_password_hash, check_password_hash
 from database import get_db_connection, init_db
+from bhashini import process_bhashini_chat, SUPPORTED_LANGUAGES
 
 app = Flask(__name__)
-app.secret_key = 'silvercare-safe-travel-companion-secret'
+app.secret_key = os.environ.get('SECRET_KEY', 'silvercare-safe-travel-companion-secret')
+
+# Google Apps Script Web App URL (Relays emails over HTTPS Port 443)
+GAS_WEBAPP_URL = os.environ.get('GAS_WEBAPP_URL', '')
 
 # Ensure database is initialized
 init_db()
@@ -12,6 +21,263 @@ init_db()
 def generate_booking_code():
     chars = string.ascii_uppercase + string.digits
     return 'SC-' + ''.join(random.choices(chars, k=5))
+
+def send_otp_email(to_email, otp, user_name="Traveller"):
+    """
+    Sends OTP email:
+    - If demo/test email: Flags as demo mode so OTP is displayed on screen.
+    - If real email & GAS_WEBAPP_URL configured: Dispatches via Google Apps Script (Port 443).
+    - If real email & no GAS_WEBAPP_URL: Falls back to demo display for seamless testing.
+    """
+    to_email_lower = to_email.lower().strip()
+    is_demo = ('demo' in to_email_lower or 'test' in to_email_lower or to_email_lower.endswith('@demo.com'))
+
+    if is_demo or not GAS_WEBAPP_URL:
+        # Demo mode: Display OTP directly on screen
+        reason = "Demo Email Detected" if is_demo else "Google Apps Script Relay URL Not Set (Demo Mode)"
+        return {
+            'success': False,
+            'is_demo': True,
+            'reason': reason,
+            'otp': otp,
+            'message': f"[{reason}] Your verification code is: {otp}"
+        }
+
+    # Dispatch via Google Apps Script over HTTPS Port 443
+    try:
+        payload = json.dumps({
+            "to": to_email,
+            "otp": otp,
+            "name": user_name,
+            "subject": "Your Silvercare Travel Verification Code"
+        }).encode('utf-8')
+
+        req = urllib.request.Request(
+            GAS_WEBAPP_URL,
+            data=payload,
+            headers={'Content-Type': 'application/json'}
+        )
+
+        with urllib.request.urlopen(req, timeout=8) as response:
+            res_data = json.loads(response.read().decode('utf-8'))
+            if res_data.get('status') == 'success':
+                return {
+                    'success': True,
+                    'is_demo': False,
+                    'message': f"A 6-digit verification code was sent to {to_email} via Google Apps Script (Port 443)."
+                }
+            else:
+                return {
+                    'success': False,
+                    'is_demo': True,
+                    'otp': otp,
+                    'message': f"Email service notice: {res_data.get('message', 'Failed to dispatch')}. Demo OTP: {otp}"
+                }
+    except Exception as e:
+        print(f"Error dispatching email via Google Apps Script (Port 443): {e}")
+        return {
+            'success': False,
+            'is_demo': True,
+            'otp': otp,
+            'message': f"Could not reach Google Apps Script (Port 443). Demo OTP displayed: {otp}"
+        }
+
+@app.context_processor
+def inject_global_context():
+    """Provides user session and language options to all templates."""
+    current_user = None
+    if 'user_id' in session:
+        current_user = {
+            'id': session['user_id'],
+            'name': session.get('user_name', 'User'),
+            'role': session.get('role', 'traveller'),
+            'email': session.get('user_email', '')
+        }
+    return {
+        'current_user': current_user,
+        'supported_languages': SUPPORTED_LANGUAGES,
+        'current_language': session.get('selected_language', 'en')
+    }
+
+# ================= AUTHENTICATION & OTP ROUTES =================
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        name = request.form.get('name', '').strip()
+        email = request.form.get('email', '').strip().lower()
+        phone = request.form.get('phone', '').strip()
+        role = request.form.get('role', 'traveller').strip().lower()
+        password = request.form.get('password', '')
+        confirm_password = request.form.get('confirm_password', '')
+
+        if not (name and email and password):
+            flash('Please provide your name, email, and password.', 'danger')
+            return render_template('signup.html')
+
+        if password != confirm_password:
+            flash('Passwords do not match. Please try again.', 'danger')
+            return render_template('signup.html')
+
+        if role not in ['traveller', 'companion']:
+            role = 'traveller'
+
+        conn = get_db_connection()
+        existing_user = conn.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
+
+        if existing_user and existing_user['is_verified'] == 1:
+            conn.close()
+            flash('An account with this email already exists. Please log in.', 'info')
+            return redirect(url_for('login', role=role))
+
+        # Generate 6-digit numeric OTP
+        otp = str(random.randint(100000, 999999))
+        password_hash = generate_password_hash(password)
+
+        if existing_user:
+            # Update unverified user
+            conn.execute('''
+                UPDATE users SET name = ?, phone = ?, password_hash = ?, role = ?, otp = ?, otp_created_at = CURRENT_TIMESTAMP
+                WHERE email = ?
+            ''', (name, phone, password_hash, role, otp, email))
+        else:
+            conn.execute('''
+                INSERT INTO users (name, email, phone, password_hash, role, is_verified, otp, otp_created_at)
+                VALUES (?, ?, ?, ?, ?, 0, ?, CURRENT_TIMESTAMP)
+            ''', (name, email, phone, password_hash, role, otp))
+
+        conn.commit()
+        conn.close()
+
+        # Send OTP (Real email via GAS over port 443, or Demo fallback)
+        email_result = send_otp_email(email, otp, name)
+
+        session['pending_email'] = email
+        session['pending_role'] = role
+        if email_result.get('is_demo'):
+            session['demo_otp'] = otp
+        else:
+            session.pop('demo_otp', None)
+
+        flash(email_result['message'], 'info' if email_result.get('is_demo') else 'success')
+        return redirect(url_for('verify_otp'))
+
+    role_param = request.args.get('role', 'traveller')
+    return render_template('signup.html', selected_role=role_param)
+
+@app.route('/verify-otp', methods=['GET', 'POST'])
+def verify_otp():
+    pending_email = session.get('pending_email')
+    if not pending_email:
+        flash('No registration pending. Please sign up or log in.', 'warning')
+        return redirect(url_for('signup'))
+
+    if request.method == 'POST':
+        entered_otp = request.form.get('otp', '').strip()
+
+        conn = get_db_connection()
+        user = conn.execute('SELECT * FROM users WHERE email = ?', (pending_email,)).fetchone()
+
+        if user and user['otp'] and user['otp'] == entered_otp:
+            # Mark user verified
+            conn.execute('UPDATE users SET is_verified = 1, otp = NULL WHERE id = ?', (user['id'],))
+            
+            # If companion, ensure a profile row exists in companions table
+            if user['role'] == 'companion':
+                comp_profile = conn.execute('SELECT * FROM companions WHERE user_id = ?', (user['id'],)).fetchone()
+                if not comp_profile:
+                    conn.execute('''
+                        INSERT INTO companions (user_id, name, phone, verified_badge, rating, trips_completed, skills, bio)
+                        VALUES (?, ?, ?, 1, 5.0, 0, 'Mobility Assistance, Luggage Handling', 'Newly verified caring companion ready to assist.')
+                    ''', (user['id'], user['name'], user['phone'] or ''))
+            
+            conn.commit()
+            conn.close()
+
+            # Log user in
+            session['user_id'] = user['id']
+            session['user_name'] = user['name']
+            session['role'] = user['role']
+            session['user_email'] = user['email']
+
+            session.pop('pending_email', None)
+            session.pop('demo_otp', None)
+
+            flash(f'Welcome, {user["name"]}! Your account is verified and ready.', 'success')
+            if user['role'] == 'companion':
+                return redirect(url_for('companion_portal'))
+            return redirect(url_for('index'))
+        else:
+            conn.close()
+            flash('Invalid OTP code. Please check and enter the correct 6-digit code.', 'danger')
+
+    demo_otp = session.get('demo_otp')
+    return render_template('verify_otp.html', email=pending_email, demo_otp=demo_otp)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    selected_role = request.args.get('role', 'traveller').lower()
+    if selected_role not in ['traveller', 'companion']:
+        selected_role = 'traveller'
+
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip().lower()
+        password = request.form.get('password', '')
+        role = request.form.get('role', 'traveller').strip().lower()
+
+        conn = get_db_connection()
+        user = conn.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
+        conn.close()
+
+        if not user:
+            flash('No account found with this email. Please sign up first.', 'danger')
+            return render_template('login.html', selected_role=role)
+
+        if user['role'] != role:
+            flash(f'This account is registered as a {user["role"].capitalize()}. Please switch tabs to log in.', 'warning')
+            return render_template('login.html', selected_role=role)
+
+        if not check_password_hash(user['password_hash'], password):
+            flash('Incorrect password. Please try again.', 'danger')
+            return render_template('login.html', selected_role=role)
+
+        if user['is_verified'] == 0:
+            # Resend OTP
+            otp = str(random.randint(100000, 999999))
+            conn = get_db_connection()
+            conn.execute('UPDATE users SET otp = ?, otp_created_at = CURRENT_TIMESTAMP WHERE id = ?', (otp, user['id']))
+            conn.commit()
+            conn.close()
+
+            email_result = send_otp_email(user['email'], otp, user['name'])
+            session['pending_email'] = user['email']
+            session['pending_role'] = user['role']
+            if email_result.get('is_demo'):
+                session['demo_otp'] = otp
+
+            flash('Please verify your account with the OTP before logging in.', 'info')
+            return redirect(url_for('verify_otp'))
+
+        # Successful Login
+        session['user_id'] = user['id']
+        session['user_name'] = user['name']
+        session['role'] = user['role']
+        session['user_email'] = user['email']
+
+        flash(f'Welcome back, {user["name"]}!', 'success')
+        if user['role'] == 'companion':
+            return redirect(url_for('companion_portal'))
+        return redirect(url_for('index'))
+
+    return render_template('login.html', selected_role=selected_role)
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('You have been logged out safely.', 'info')
+    return redirect(url_for('index'))
+
+# ================= CORE APPLICATION ROUTES =================
 
 @app.route('/')
 def index():
@@ -50,6 +316,7 @@ def book():
             elderly_phone = booker_phone
 
         booking_code = generate_booking_code()
+        user_id = session.get('user_id')
 
         conn = get_db_connection()
         # Find an available companion to auto-match
@@ -60,12 +327,12 @@ def book():
 
         conn.execute('''
             INSERT INTO bookings (
-                booking_code, booked_by, booker_name, booker_phone, elderly_name, elderly_phone,
+                booking_code, user_id, booked_by, booker_name, booker_phone, elderly_name, elderly_phone,
                 pickup_location, destination, destination_type, service_date, service_time,
                 assistance_needed, notes, status, companion_id, payment_status, total_fare
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending', 450)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending', 450)
         ''', (
-            booking_code, booked_by, booker_name, booker_phone, elderly_name, elderly_phone,
+            booking_code, user_id, booked_by, booker_name, booker_phone, elderly_name, elderly_phone,
             pickup_location, destination, destination_type, service_date, service_time,
             assistance_needed, notes, status, companion_id
         ))
@@ -75,11 +342,12 @@ def book():
         flash(f'Companion successfully booked! Your booking tracking ID is {booking_code}.', 'success')
         return redirect(url_for('track', booking_code=booking_code))
 
-    # Pre-fill from query params if coming from AI Assistant
+    # Pre-fill from query params or logged-in user
     prefill = {
         'destination': request.args.get('destination', ''),
         'destination_type': request.args.get('destination_type', ''),
-        'assistance': request.args.get('assistance', '')
+        'assistance': request.args.get('assistance', ''),
+        'booker_name': session.get('user_name', '') if session.get('user_name') else ''
     }
     return render_template('book.html', prefill=prefill)
 
@@ -212,41 +480,25 @@ def review(booking_code):
     conn.close()
     return render_template('review.html', booking=booking)
 
+# ================= BHASHINI MULTILINGUAL CHATBOT API =================
+
 @app.route('/api/chat', methods=['POST'])
 def chat_assistant():
     data = request.get_json() or {}
-    message = (data.get('message') or '').strip().lower()
+    message = (data.get('message') or '').strip()
+    language = (data.get('language') or session.get('selected_language') or 'en').strip()
 
-    if not message:
-        return jsonify({'reply': "Hello! I am SilverBot, your travel assistance guide. How can I help you or your family member today?"})
+    # Process using Bhashini AI engine
+    result = process_bhashini_chat(message, language=language)
 
-    reply = ""
     action_url = None
-
-    if 'railway' in message or 'train' in message or 'station' in message:
-        reply = "Our verified companions assist elders at railway stations with coolie/luggage coordination, platform navigation, wheelchair handling, and finding their seat and coach. Would you like to book station assistance?"
-        action_url = url_for('book', destination_type='Railway Station', assistance='Luggage Support, Wheelchair Assistance, Ticket Guidance')
-    elif 'hospital' in message or 'doctor' in message or 'clinic' in message:
-        reply = "We provide patient and caring companions for hospital checkups, queue standing, wheelchair support, and pharmacy guidance. Would you like to schedule a hospital companion?"
-        action_url = url_for('book', destination_type='Hospital', assistance='Wheelchair Assistance, Walking Support')
-    elif 'airport' in message or 'flight' in message:
-        reply = "For airport travel, companions assist with terminal entry, luggage trolley handling, security check accompaniment, and boarding gate navigation. Click below to book airport assistance."
-        action_url = url_for('book', destination_type='Airport', assistance='Luggage Support, Wheelchair Assistance')
-    elif 'safety' in message or 'verify' in message or 'verified' in message or 'trust' in message:
-        reply = "Every Silvercare companion undergoes a strict 3-step verification: Government identity verification, local police verification, and elderly empathy & emergency first-aid training. You can also view live GPS updates throughout the trip."
-        action_url = url_for('companions_list')
-    elif 'track' in message or 'status' in message or 'where' in message:
-        reply = "You can track your journey live in real time using your unique booking code (e.g. SC-XXXXX). Families receive constant reassurance at every milestone."
-        action_url = url_for('track')
-    elif 'price' in message or 'cost' in message or 'fare' in message:
-        reply = "Silvercare companion assistance starts from a transparent flat rate of ₹450 per journey (up to 3 hours). Payment can be made easily post-trip via UPI, card, or auto-pay."
-        action_url = url_for('book')
-    else:
-        reply = "I'm here to help elderly citizens travel with dignity and independence. You can book a verified companion for railway stations, hospitals, airports, or daily errands with complete live tracking."
-        action_url = url_for('book')
+    if result.get('action_type'):
+        action_url = url_for('book', destination_type=result['action_type'], assistance=result.get('action_asst', ''))
 
     return jsonify({
-        'reply': reply,
+        'reply': result['reply'],
+        'language': result['language'],
+        'language_name': result['language_name'],
         'action_url': action_url,
         'action_label': 'Book Companion' if action_url else None
     })
